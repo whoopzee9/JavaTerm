@@ -1,10 +1,12 @@
 package com.course.service.impl;
 
+import com.course.exception.DepartmentDeletionException;
 import com.course.exception.DepartmentNotFoundException;
 import com.course.repository.DepartmentsRepository;
 import com.course.entity.Departments;
 import com.course.service.DepartmentsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -50,6 +52,8 @@ public class DepartmentsServiceImpl implements DepartmentsService {
             departmentsRepository.deleteById(id);
         } catch (EmptyResultDataAccessException ex) {
             throw new DepartmentNotFoundException("Department nor found!");
+        } catch (DataIntegrityViolationException ex) {
+            throw new DepartmentDeletionException("Department can't be deleted!");
         }
     }
 

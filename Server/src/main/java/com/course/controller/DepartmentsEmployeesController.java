@@ -2,6 +2,7 @@ package com.course.controller;
 
 import com.course.entity.DepartmentsEmployees;
 import com.course.exception.DepartmentsEmployeesNotFoundException;
+import com.course.exception.InvalidJwtAuthenticationException;
 import com.course.service.DepartmentsEmployeesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,11 @@ public class DepartmentsEmployeesController {
 
     @PostMapping(value = "/add", consumes = "application/json", produces = "application/json")
     public ResponseEntity<DepartmentsEmployees> addDepartmentsEmployees(@RequestBody DepartmentsEmployees DE) {
-        return new ResponseEntity<>(service.addDepartmentsEmployees(DE), HttpStatus.CREATED);
+        try {
+            return new ResponseEntity<>(service.addDepartmentsEmployees(DE), HttpStatus.CREATED);
+        } catch (InvalidJwtAuthenticationException ex) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
+        }
     }
 
     @PutMapping(value = "/update", consumes = "application/json", produces = "application/json")
@@ -28,12 +33,18 @@ public class DepartmentsEmployeesController {
             return new ResponseEntity<>(service.updateDepartmentsEmployees(DE), HttpStatus.OK);
         } catch (DepartmentsEmployeesNotFoundException ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        } catch (InvalidJwtAuthenticationException ex) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
         }
     }
 
     @GetMapping("/all")
     public ResponseEntity<List<DepartmentsEmployees>> getAllDepartmentsEmployees() {
-        return new ResponseEntity<>(service.departmentsEmployeesList(), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(service.departmentsEmployeesList(), HttpStatus.OK);
+        } catch (InvalidJwtAuthenticationException ex) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
+        }
     }
 
     @GetMapping("/getByDepartmentId/{id}")
@@ -42,6 +53,8 @@ public class DepartmentsEmployeesController {
             return new ResponseEntity<>(service.findByDepartmentId(id), HttpStatus.OK);
         } catch (DepartmentsEmployeesNotFoundException ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        } catch (InvalidJwtAuthenticationException ex) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
         }
     }
 
@@ -51,6 +64,8 @@ public class DepartmentsEmployeesController {
             return new ResponseEntity<>(service.findByDepartmentName(name), HttpStatus.OK);
         } catch (DepartmentsEmployeesNotFoundException ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        } catch (InvalidJwtAuthenticationException ex) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
         }
     }
 
@@ -60,6 +75,8 @@ public class DepartmentsEmployeesController {
             return new ResponseEntity<>(service.findByEmployeeId(id), HttpStatus.OK);
         } catch (DepartmentsEmployeesNotFoundException ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        } catch (InvalidJwtAuthenticationException ex) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
         }
     }
 
@@ -71,29 +88,23 @@ public class DepartmentsEmployeesController {
             return new ResponseEntity<>(service.findByEmployeeName(first, last, pather), HttpStatus.OK);
         } catch (DepartmentsEmployeesNotFoundException ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        } catch (InvalidJwtAuthenticationException ex) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
         }
     }
 
-    @DeleteMapping("/deleteById/{eId}/{dId}")
-    public ResponseEntity deleteByIds(@PathVariable("eId") Long eId, @PathVariable("dId") Long dId) {
+    @DeleteMapping("/deleteById/{id}")
+    public ResponseEntity deleteById(@PathVariable("id") Long id) {
         try {
-            service.deleteDepartmentsEmployeesByIds(eId, dId);
+            service.deleteDepartmentEmployee(id);
             return new ResponseEntity(HttpStatus.OK);
         } catch (DepartmentsEmployeesNotFoundException ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        } catch (InvalidJwtAuthenticationException ex) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
         }
     }
 
-    @DeleteMapping("/deleteByName/{last}/{first}/{pather}/{depart}")
-    public ResponseEntity deleteByNames(@PathVariable("last") String last, @PathVariable("first") String first,
-                                        @PathVariable("pather") String pather, @PathVariable("depart") String depart) {
-        try {
-            service.deleteDepartmentsEmployeesByNames(last, first, pather, depart);
-            return new ResponseEntity(HttpStatus.OK);
-        } catch (DepartmentsEmployeesNotFoundException ex) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-        }
-    }
 
     @Autowired
     public void setService(DepartmentsEmployeesService service) {

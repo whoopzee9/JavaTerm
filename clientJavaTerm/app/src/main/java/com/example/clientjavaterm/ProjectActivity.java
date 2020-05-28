@@ -28,6 +28,7 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -376,8 +377,8 @@ public class ProjectActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFail(String message) {
-                createToast("No such Departments!");
+            public void onFail(String message, int code) {
+                handlerForBadRequest(code, "departments");
             }
         };
         handler.setHttpMethod("GET");
@@ -408,8 +409,8 @@ public class ProjectActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFail(String message) {
-                createToast("No such projects!");
+            public void onFail(String message, int code) {
+                handlerForBadRequest(code, "projects");
             }
         };
 
@@ -471,8 +472,8 @@ public class ProjectActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFail(String message) {
-                createToast("No such projects!");
+            public void onFail(String message, int code) {
+                handlerForBadRequest(code,"projects");
             }
         };
 
@@ -488,62 +489,88 @@ public class ProjectActivity extends AppCompatActivity {
     }
 
     private void BAddClickListener() {
-        String name = ETName.getText().toString();
-        String cost = ETCost.getText().toString();
-        String dateBeg = ETDateBeg.getText().toString();
-        String dateEnd = ETDateEnd.getText().toString();
-        String dateEndReal = ETDateEndReal.getText().toString();
-
-        //TODO добавить проверку на существование
+        final String name = ETName.getText().toString();
+        final String cost = ETCost.getText().toString();
+        final String dateBeg = ETDateBeg.getText().toString();
+        final String dateEnd = ETDateEnd.getText().toString();
+        final String dateEndReal = ETDateEndReal.getText().toString();
 
         CallBack<String> callBack = new CallBack<String>() {
             @Override
             public void onSuccess(String result) {
-                final Projects proj = projectGson.fromJson(result, Projects.class);
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        ETId.setText(proj.getId().toString());
+                Type type = new TypeToken<List<Projects>>(){}.getType();
+                List<Projects> list = new ArrayList<>();
+                try {
+                    list = projectGson.fromJson(result, type);
+                } catch (JsonIOException | JsonSyntaxException ex) {
+                    Projects proj = projectGson.fromJson(result, Projects.class);
+                    list.add(proj);
+                }
+
+                if (!list.contains(array.get(currentRecord))) {
+                    CallBack<String> call = new CallBack<String>() {
+                        @Override
+                        public void onSuccess(String result) {
+                            final Projects proj = projectGson.fromJson(result, Projects.class);
+                            runOnUiThread(new Runnable() {
+                                public void run() {
+                                    ETId.setText(proj.getId().toString());
+                                }
+                            });
+                            createToast("Adding completed successfully!");
+                        }
+
+                        @Override
+                        public void onFail(String message, int code) {
+                            handlerForBadRequest(code, "projects"); //adding failed
+                        }
+                    };
+
+                    if (name.isEmpty() || cost.isEmpty() || dateBeg.isEmpty() || dateEnd.isEmpty() ||
+                            dateEndReal.isEmpty() || currentDepartment == null) {
+                        Toast toast = Toast.makeText(getApplicationContext(),
+                                "Not enough information!",  Toast.LENGTH_LONG);
+                        toast.show();
+                    } else {
+                        Float newCost = Float.parseFloat(cost);
+                        Date beg = null;
+                        Date end = null;
+                        Date endReal = null;
+                        try {
+                            java.util.Date utilDate = new SimpleDateFormat( "dd.MM.yyyy" ).parse(dateBeg);
+                            beg = new Date(utilDate.getTime());
+                            utilDate = new SimpleDateFormat( "dd.MM.yyyy" ).parse(dateEnd);
+                            end = new Date(utilDate.getTime());
+                            utilDate = new SimpleDateFormat( "dd.MM.yyyy" ).parse(dateEndReal);
+                            endReal = new Date(utilDate.getTime());
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        Projects object = new Projects(null, name, newCost, currentDepartment, beg, end, endReal);
+                        String json = projectGson.toJson(object);
+                        System.out.println(json);
+                        //System.out.println(object);
+                        //System.out.println(object.toString());
+                        String url = "projects/add";
+                        handler.setUrlResource(url);
+                        handler.setHttpMethod("POST");
+                        handler.execute(call, json);
                     }
-                });
-                createToast("Adding completed successfully!");
+                } else {
+                    createToast("Project already exist!");
+                }
+
             }
 
             @Override
-            public void onFail(String message) {
-                createToast("Adding failed!");
+            public void onFail(String message, int code) {
+                handlerForBadRequest(code, "departments"); //Adding failed
             }
         };
 
-        if (name.isEmpty() || cost.isEmpty() || dateBeg.isEmpty() || dateEnd.isEmpty() ||
-                dateEndReal.isEmpty() || currentDepartment == null) {
-            Toast toast = Toast.makeText(getApplicationContext(),
-                    "Not enough information!",  Toast.LENGTH_LONG);
-            toast.show();
-        } else {
-            Float newCost = Float.parseFloat(cost);
-            Date beg = null;
-            Date end = null;
-            Date endReal = null;
-            try {
-                java.util.Date utilDate = new SimpleDateFormat( "dd.MM.yyyy" ).parse(dateBeg);
-                beg = new Date(utilDate.getTime());
-                utilDate = new SimpleDateFormat( "dd.MM.yyyy" ).parse(dateEnd);
-                end = new Date(utilDate.getTime());
-                utilDate = new SimpleDateFormat( "dd.MM.yyyy" ).parse(dateEndReal);
-                endReal = new Date(utilDate.getTime());
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            Projects object = new Projects(null, name, newCost, currentDepartment, beg, end, endReal);
-            String json = projectGson.toJson(object);
-            System.out.println(json);
-            //System.out.println(object);
-            //System.out.println(object.toString());
-            String url = "projects/add";
-            handler.setUrlResource(url);
-            handler.setHttpMethod("POST");
-            handler.execute(callBack, json);
-        }
+        handler.setUrlResource("departments/all");
+        handler.setHttpMethod("GET");
+        handler.execute(callBack, null);
     }
 
     private void BUpdateClickListener() {
@@ -570,8 +597,8 @@ public class ProjectActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFail(String message) {
-                createToast("Updating failed!");
+            public void onFail(String message, int code) {
+                handlerForBadRequest(code, "projects"); //Updating failed
             }
         };
 
@@ -616,6 +643,27 @@ public class ProjectActivity extends AppCompatActivity {
                 toast.show();
             }
         });
+    }
+
+    private void handlerForBadRequest(int code, String name) {
+        String mess;
+        switch (code) {
+            case HttpURLConnection.HTTP_NOT_FOUND: {
+                mess = "No such "+ name + "!";
+                break;
+            }
+            case HttpURLConnection.HTTP_FORBIDDEN: {
+                mess = "Your token is expired!";
+                break;
+            }
+            /*case HttpURLConnection.HTTP_BAD_METHOD: {
+                mess = "You can't delete employee!";
+                break;
+            }*/
+            default:
+                mess = "Connection failed!";
+        }
+        createToast(mess);
     }
 
     private void clearFields() {

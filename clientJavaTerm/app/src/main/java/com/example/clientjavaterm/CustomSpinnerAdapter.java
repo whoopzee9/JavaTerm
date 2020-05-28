@@ -18,12 +18,14 @@ public class CustomSpinnerAdapter<T> extends ArrayAdapter<T> {
 
     private final Context mContext;
     private List<T> list;
+    private boolean flag;
 
     public CustomSpinnerAdapter(Context context, int textViewResourceId) {
 
         super(context, textViewResourceId);
         this.mContext = context;
         this.list = new ArrayList<>();
+        flag = false;
     }
 
     @Override
@@ -55,7 +57,9 @@ public class CustomSpinnerAdapter<T> extends ArrayAdapter<T> {
         TextView name = view.findViewById(R.id.TVDepartmentSpinnerRowName);
 
         //v.setTypeface(myTypeFace);
-        name.setText(list.get(position).toString());
+        if (flag) {
+            name.setText(list.get(position).toString());
+        }
         return view;
     }
 
@@ -76,5 +80,7 @@ public class CustomSpinnerAdapter<T> extends ArrayAdapter<T> {
         return list;
     }
 
-
+    public void setFlag(boolean flag) {
+        this.flag = flag;
+    }
 }

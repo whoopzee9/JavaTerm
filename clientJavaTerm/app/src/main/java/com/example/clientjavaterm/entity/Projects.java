@@ -1,5 +1,7 @@
 package com.example.clientjavaterm.entity;
 
+import androidx.annotation.Nullable;
+
 import java.sql.Date;
 
 public class Projects {
@@ -75,5 +77,25 @@ public class Projects {
 
     public void setDateEndReal(Date dateEndReal) {
         this.dateEndReal = dateEndReal;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        Projects proj = (Projects) obj;
+        return id.equals(proj.id) &&
+                name.equals(proj.name) &&
+                cost.equals(proj.cost) &&
+                departments.equals(proj.departments) &&
+                dateBeg.equals(proj.dateBeg) &&
+                dateEnd.equals(proj.dateEnd) &&
+                dateEndReal.equals(proj.dateEndReal);
     }
 }

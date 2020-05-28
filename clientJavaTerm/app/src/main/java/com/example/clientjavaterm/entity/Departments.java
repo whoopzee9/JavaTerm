@@ -1,6 +1,7 @@
 package com.example.clientjavaterm.entity;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class Departments {
     private Long id;
@@ -31,5 +32,20 @@ public class Departments {
     @Override
     public String toString() {
         return "[ " + id + ", " + name + " ]";
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        Departments dep = (Departments) obj;
+        return id.equals(dep.id) &&
+                name.equals(dep.name);
     }
 }

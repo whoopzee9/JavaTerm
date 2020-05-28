@@ -1,7 +1,9 @@
 package com.course.controller;
 
 import com.course.entity.Departments;
+import com.course.exception.DepartmentDeletionException;
 import com.course.exception.DepartmentNotFoundException;
+import com.course.exception.InvalidJwtAuthenticationException;
 import com.course.service.DepartmentsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,7 +21,11 @@ public class DepartmentsController {
 
     @PostMapping(value = "/add", consumes = "application/json", produces = "application/json")
     public ResponseEntity<Departments> addDepartment(@RequestBody Departments departments) {
-        return new ResponseEntity<>(departmentsService.addDepartments(departments), HttpStatus.CREATED);
+        try {
+            return new ResponseEntity<>(departmentsService.addDepartments(departments), HttpStatus.CREATED);
+        } catch (InvalidJwtAuthenticationException ex) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
+        }
     }
 
     @PutMapping(value = "/update", consumes = "application/json", produces = "application/json")
@@ -28,12 +34,18 @@ public class DepartmentsController {
             return new ResponseEntity<>(departmentsService.updateDepartments(departments), HttpStatus.OK);
         } catch (DepartmentNotFoundException ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        } catch (InvalidJwtAuthenticationException ex) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
         }
     }
 
     @GetMapping("/all")
     public ResponseEntity<List<Departments>> getAllDepartments() {
-        return new ResponseEntity<>(departmentsService.departmentsList(), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(departmentsService.departmentsList(), HttpStatus.OK);
+        } catch (InvalidJwtAuthenticationException ex) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
+        }
     }
 
     @GetMapping("/getById/{id}")
@@ -42,6 +54,8 @@ public class DepartmentsController {
             return new ResponseEntity<>(departmentsService.findDepartmentsById(id), HttpStatus.OK);
         } catch (DepartmentNotFoundException ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        } catch (InvalidJwtAuthenticationException ex) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
         }
     }
 
@@ -51,6 +65,8 @@ public class DepartmentsController {
             return new ResponseEntity<>(departmentsService.findDepartmentsByName(name), HttpStatus.OK);
         } catch (DepartmentNotFoundException ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        } catch (InvalidJwtAuthenticationException ex) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
         }
     }
 
@@ -61,6 +77,10 @@ public class DepartmentsController {
             return new ResponseEntity(HttpStatus.OK);
         } catch (DepartmentNotFoundException ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        } catch (DepartmentDeletionException ex) {
+            throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, ex.getMessage());
+        } catch (InvalidJwtAuthenticationException ex) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
         }
     }
 
@@ -71,6 +91,8 @@ public class DepartmentsController {
             return new ResponseEntity(HttpStatus.OK);
         } catch (DepartmentNotFoundException ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        } catch (InvalidJwtAuthenticationException ex) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
         }
     }
 

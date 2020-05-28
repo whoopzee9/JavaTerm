@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -16,6 +17,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +29,7 @@ public class LoginActivity extends AppCompatActivity {
     private Switch SwRegister;
     private Button BLogin;
     private String baseUrl;
+    private boolean swState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,16 +42,41 @@ public class LoginActivity extends AppCompatActivity {
         ETRepeatPassword = findViewById(R.id.etRepeatPassword);
         SwRegister = findViewById(R.id.swRegister);
         BLogin = findViewById(R.id.bLogin);
+
+        SwRegister.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    ETRepeatPassword.setVisibility(View.VISIBLE);
+                } else {
+                    ETRepeatPassword.setVisibility(View.GONE);
+                }
+                swState = isChecked;
+            }
+        });
+
         BLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String username = ETLogin.getText().toString();
                 String password = ETPassword.getText().toString();
                 //baseUrl = "http://localhost:8080/"; //10.0.2.2
-                baseUrl = "http://192.168.1.51:8080/"; //10.0.2.2
-                //String baseUrl = "http://10.0.2.2:5432/"; //emulator
+                baseUrl = "http://192.168.1.52:8080/";
+                //baseUrl = "http://10.0.2.2:5432/"; //emulator
                 //baseUrl = "http://192.168.1.33:8080/"; //phone
-                //baseUrl = "http://127.0.0.1:5432/"; //phone
+                String urlResource;
+                if (swState) {
+                    String repeatPassword = ETRepeatPassword.getText().toString();
+                    if (!password.equals(repeatPassword)) {
+                        Toast toast = Toast.makeText(getApplicationContext(),
+                                "passwords are not the same!",  Toast.LENGTH_LONG);
+                        toast.show();
+                        return;
+                    }
+                    urlResource = "auth/signUp";
+                } else {
+                    urlResource = "auth/signIn";
+                }
 
                 JSONObject object = new JSONObject();
                 try {
@@ -61,7 +89,7 @@ public class LoginActivity extends AppCompatActivity {
                 final RequestHandler requestHandler = new RequestHandler(baseUrl);
 
                 findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
-                requestHandler.setUrlResource("auth/signIn");
+                requestHandler.setUrlResource(urlResource);
                 requestHandler.setHttpMethod("POST");
                 requestHandler.execute(new CallBack<String>() {
                     @Override
@@ -74,19 +102,30 @@ public class LoginActivity extends AppCompatActivity {
                         });
                     }
                     @Override
-                    public void onFail(String message) {
-                        ifFailure();
+                    public void onFail(String message, int code) {
+                        ifFailure(code);
                     }
                 }, object.toString());
             }
         });
     }
 
-    private void ifFailure() {
+    private void ifFailure(int code) {
+        final String msg;
+        switch (code) {
+            case HttpURLConnection.HTTP_BAD_REQUEST: {
+                msg = "User with this name already exist!";
+                break;
+            }
+            default: {
+                msg = "Invalid username or password!";
+            }
+        }
+
         runOnUiThread(new Runnable() {
             public void run() {
                 final Toast toast = Toast.makeText(getApplicationContext(),
-                        "Invalid username or password!",  Toast.LENGTH_LONG);
+                        msg,  Toast.LENGTH_LONG);
                 toast.show();
                 findViewById(R.id.loadingPanel).setVisibility(View.GONE);
             }

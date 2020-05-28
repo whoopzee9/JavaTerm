@@ -1,10 +1,12 @@
 package com.course.service.impl;
 
+import com.course.exception.EmployeeDeletionException;
 import com.course.exception.EmployeeNotFoundException;
 import com.course.repository.EmployeesRepository;
 import com.course.entity.Employees;
 import com.course.service.EmployeesService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -54,6 +56,8 @@ public class EmployeesServiceImpl implements EmployeesService {
             employeesRepository.deleteById(id);
         } catch (EmptyResultDataAccessException ex) {
             throw new EmployeeNotFoundException("Employee not found!");
+        } catch (DataIntegrityViolationException ex) {
+            throw new EmployeeDeletionException("Employee can't be deleted!");
         }
     }
 

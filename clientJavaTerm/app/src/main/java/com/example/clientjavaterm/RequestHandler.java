@@ -80,7 +80,7 @@ public class RequestHandler {
                     connection.setRequestProperty("Accept", "application/json");
                     connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
 
-                    if (!urlResource.equals("auth/signIn")) {
+                    if (!urlResource.equals("auth/signIn") && !urlResource.equals("auth/signUp")) {
                         connection.setRequestProperty("Authorization", "Bearer " + token);
                     }
                     if (object != null && (httpMethod.equals("PUT") || httpMethod.equals("POST"))) {
@@ -90,24 +90,27 @@ public class RequestHandler {
                         os.close();
                     }
 
-                    if (connection.getResponseCode() != 200 && connection.getResponseCode() != 201) {
+                    int code = connection.getResponseCode();
+                    if (code != 200 && code != 201) {
                         System.err.println("connection failed");
-                        System.out.println("code: " + connection.getResponseCode());
-                        callBack.onFail("error");
-                    }
+                        System.out.println("code: " + code);
+                        callBack.onFail("error", code);
+                    } else {
+                        BufferedReader br = new BufferedReader(
+                                new InputStreamReader(connection.getInputStream(), "utf-8"));
 
-                    BufferedReader br = new BufferedReader(
-                            new InputStreamReader(connection.getInputStream(), "utf-8"));
-
-                    StringBuilder response = new StringBuilder();
-                    String responseLine = null;
-                    while ((responseLine = br.readLine()) != null) {
-                        response.append(responseLine.trim());
+                        StringBuilder response = new StringBuilder();
+                        String responseLine = null;
+                        while ((responseLine = br.readLine()) != null) {
+                            response.append(responseLine.trim());
+                        }
+                        callBack.onSuccess(response.toString());
                     }
-                    callBack.onSuccess(response.toString());
+                    connection.disconnect();
+
                 } catch (Exception e) { //TODO определить исключения
                     e.printStackTrace();
-                    callBack.onFail("error " + e.getMessage());
+                    callBack.onFailure("error " + e.getMessage());
                 }
             }
         });

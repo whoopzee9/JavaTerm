@@ -24,12 +24,4 @@ public interface DepartmentsEmployeesRepository extends CrudRepository<Departmen
             "e.id = de.employees.id where e.firstName = :first and e.lastName = :last and " +
             "e.patherName = :pather")
     Collection<DepartmentsEmployees> findByEmployeeName(@Param("first") String first, @Param("last") String last, @Param("pather") String pather);
-
-    @Query("delete from DepartmentsEmployees de where de.employees.id = :eId and de.departments.id = :dId")
-    void deleteByIds(@Param("eId") Long eId, @Param("dId") Long dId);
-
-    @Query("delete from DepartmentsEmployees de where de.employees.lastName = :last and " +
-            "de.employees.firstName = :first and de.employees.patherName = :pather and de.departments.name = :dName")
-    void deleteByNames(@Param("last") String last, @Param("first") String first,
-                       @Param("pather") String pather, @Param("dName") String name);
 }

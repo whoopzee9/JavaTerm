@@ -2,6 +2,7 @@ package com.course.service.impl;
 
 import com.course.exception.DepartmentsEmployeesNotFoundException;
 import com.course.entity.DepartmentsEmployees;
+import com.course.exception.EmployeeNotFoundException;
 import com.course.service.DepartmentsEmployeesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -71,18 +72,9 @@ public class DepartmentsEmployeesImpl implements DepartmentsEmployeesService {
     }
 
     @Override
-    public void deleteDepartmentsEmployeesByIds(Long eId, Long dId) {
+    public void deleteDepartmentEmployee(Long id) {
         try{
-            departmentsEmployeesRepository.deleteByIds(eId, dId);
-        } catch (EmptyResultDataAccessException ex) {
-            throw new DepartmentsEmployeesNotFoundException("DepartmentsEmployees not found!");
-        }
-    }
-
-    @Override
-    public void deleteDepartmentsEmployeesByNames(String last, String first, String pather, String dName) {
-        try{
-            departmentsEmployeesRepository.deleteByNames(last, first, pather, dName);
+            departmentsEmployeesRepository.deleteById(id);
         } catch (EmptyResultDataAccessException ex) {
             throw new DepartmentsEmployeesNotFoundException("DepartmentsEmployees not found!");
         }

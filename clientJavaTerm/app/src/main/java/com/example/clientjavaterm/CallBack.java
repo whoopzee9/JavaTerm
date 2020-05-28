@@ -2,18 +2,15 @@ package com.example.clientjavaterm;
 
 public class CallBack<T> {
 
-    public void onSuccess() {
-    }
-
     public void onSuccess(T result) {
     }
 
-    public void onFail(String message) {
+    public void onFail(String message, int requestCode) {
 
     }
 
-    public void onFailure(T result) {
-
+    public void onFailure(String message) {
+        System.err.println(message);
     }
 
 }

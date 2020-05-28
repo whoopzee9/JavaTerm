@@ -25,6 +25,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -213,7 +214,7 @@ public class EmployeeActivity extends AppCompatActivity {
     }
 
     private void BFindClickListener() {
-        CallBack<String> callBack = new CallBack<String>() {
+        final CallBack<String> callBack = new CallBack<String>() {
             @Override
             public void onSuccess(String result) {
                 Type type = new TypeToken<List<Employees>>(){}.getType();
@@ -235,8 +236,8 @@ public class EmployeeActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFail(String message) {
-                createToast("No such employees!");
+            public void onFail(String message, int code) {
+                handlerForBadRequest(code);
             }
         };
 
@@ -292,8 +293,8 @@ public class EmployeeActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFail(String message) {
-                createToast("No such employees!");
+            public void onFail(String message, int code) {
+                handlerForBadRequest(code);
             }
         };
 
@@ -309,44 +310,70 @@ public class EmployeeActivity extends AppCompatActivity {
     }
 
     private void BAddClickListener() {
-        String last = ETLastName.getText().toString();
-        String first = ETFirstName.getText().toString();
-        String pather = ETPatherName.getText().toString();
-        String position = ETPosition.getText().toString();
-        String salary = ETSalary.getText().toString();
-
-        //TODO добавить проверку на существование
+        final String last = ETLastName.getText().toString();
+        final String first = ETFirstName.getText().toString();
+        final String pather = ETPatherName.getText().toString();
+        final String position = ETPosition.getText().toString();
+        final String salary = ETSalary.getText().toString();
 
         CallBack<String> callBack = new CallBack<String>() {
             @Override
             public void onSuccess(String result) {
-                final Employees empl = employeeGson.fromJson(result, Employees.class);
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        ETId.setText(empl.getId().toString());
+                Type type = new TypeToken<List<Employees>>(){}.getType();
+                List<Employees> list = new ArrayList<>();
+                try {
+                    list = employeeGson.fromJson(result, type);
+                } catch (JsonIOException | JsonSyntaxException ex) {
+                    Employees empl = employeeGson.fromJson(result, Employees.class);
+                    list.add(empl);
+                }
+
+                if (!list.contains(array.get(currentRecord))) {
+                    CallBack<String> call = new CallBack<String>() {
+                        @Override
+                        public void onSuccess(String result) {
+                            final Employees empl = employeeGson.fromJson(result, Employees.class);
+                            runOnUiThread(new Runnable() {
+                                public void run() {
+                                    ETId.setText(empl.getId().toString());
+                                }
+                            });
+                            createToast("Adding completed successfully!");
+                        }
+
+                        @Override
+                        public void onFail(String message, int code) {
+                            handlerForBadRequest(code);
+                        }
+                    };
+
+                    if (last.isEmpty() || first.isEmpty() || pather.isEmpty() || position.isEmpty() || salary.isEmpty()) {
+                        Toast toast = Toast.makeText(getApplicationContext(),
+                                "Not enough information!",  Toast.LENGTH_LONG);
+                        toast.show();
+                    } else {
+                        Employees empl = new Employees(null, first, last, pather, position, Float.parseFloat(salary));
+                        String json = employeeGson.toJson(empl);
+                        String url = "employees/add";
+                        handler.setUrlResource(url);
+                        handler.setHttpMethod("POST");
+                        handler.execute(call, json);
                     }
-                });
-                createToast("Adding completed successfully!");
+                } else {
+                    createToast("Employee already exist!");
+                }
+
             }
 
             @Override
-            public void onFail(String message) {
-                createToast("Adding failed!");
+            public void onFail(String message, int code) {
+                handlerForBadRequest(code); //Adding failed
             }
         };
 
-        if (last.isEmpty() || first.isEmpty() || pather.isEmpty() || position.isEmpty() || salary.isEmpty()) {
-            Toast toast = Toast.makeText(getApplicationContext(),
-                    "Not enough information!",  Toast.LENGTH_LONG);
-            toast.show();
-        } else {
-            Employees empl = new Employees(null, first, last, pather, position, Float.parseFloat(salary));
-            String json = employeeGson.toJson(empl);
-            String url = "employees/add";
-            handler.setUrlResource(url);
-            handler.setHttpMethod("POST");
-            handler.execute(callBack, json);
-        }
+        handler.setUrlResource("employees/all");
+        handler.setHttpMethod("GET");
+        handler.execute(callBack, null);
     }
 
     private void BUpdateClickListener() {
@@ -372,8 +399,8 @@ public class EmployeeActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFail(String message) {
-                createToast("Updating failed!");
+            public void onFail(String message, int code) {
+                handlerForBadRequest(code); //Updating failed
             }
         };
 
@@ -403,6 +430,27 @@ public class EmployeeActivity extends AppCompatActivity {
                 toast.show();
             }
         });
+    }
+
+    private void handlerForBadRequest(int code) {
+        String mess;
+        switch (code) {
+            case HttpURLConnection.HTTP_NOT_FOUND: {
+                mess = "No such employees!";
+                break;
+            }
+            case HttpURLConnection.HTTP_FORBIDDEN: {
+                mess = "Your token is expired!";
+                break;
+            }
+            case HttpURLConnection.HTTP_BAD_METHOD: {
+                mess = "You can't delete employee!";
+                break;
+            }
+            default:
+                mess = "Connection failed!";
+        }
+        createToast(mess);
     }
 
     private void clearFields() {

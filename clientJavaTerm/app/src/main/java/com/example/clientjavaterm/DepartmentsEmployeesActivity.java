@@ -1,5 +1,6 @@
 package com.example.clientjavaterm;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,6 +29,7 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -184,6 +186,7 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
         spinnerDepartment.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                departmentAdapter.setFlag(true);
                 currentDepartment = (Departments) parent.getItemAtPosition(position);
                 currentDepartmentIndex = position;
             }
@@ -209,6 +212,7 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
         spinnerEmployee.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                employeeAdapter.setFlag(true);
                 currentEmployee = (Employees) parent.getItemAtPosition(position);
                 currentEmployeeIndex = position;
             }
@@ -289,7 +293,7 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
 
     private void updateDepartmentSpinner() {
         departmentAdapter.clear();
-        CallBack<String> callBack = new CallBack<String>() {
+        final CallBack<String> callBack = new CallBack<String>() {
             @Override
             public void onSuccess(String result) {
                 DepartmentConverter lConverter = new DepartmentConverter();
@@ -307,6 +311,7 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
                 if (!list.isEmpty()) {
 
                     final List<Departments> finalList = list;
+                    System.out.println("departments: " + finalList.size());
 
                     runOnUiThread(new Runnable() {
                         public void run() {
@@ -320,18 +325,26 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFail(String message) {
-                createToast("No such Departments!");
+            public void onFail(String message, int code) {
+                handlerForBadRequest(code, "departments");
             }
         };
-        handler.setHttpMethod("GET");
-        handler.setUrlResource("departments/all");
-        handler.execute(callBack, null);
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                handler.setHttpMethod("GET");
+                handler.setUrlResource("departments/all");
+                handler.execute(callBack, null);
+            }
+        });
+//        handler.setHttpMethod("GET");
+//        handler.setUrlResource("departments/all");
+//        handler.execute(callBack, null);
     }
 
     private void updateEmployeeSpinner() {
         employeeAdapter.clear();
-        CallBack<String> callBack = new CallBack<String>() {
+        final CallBack<String> callBack = new CallBack<String>() {
             @Override
             public void onSuccess(String result) {
                 EmployeeConverter lConverter = new EmployeeConverter();
@@ -349,6 +362,7 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
                 if (!list.isEmpty()) {
 
                     final List<Employees> finalList = list;
+                    System.out.println("employees: " + finalList.size());
 
                     runOnUiThread(new Runnable() {
                         public void run() {
@@ -361,13 +375,21 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFail(String message) {
-                createToast("No such Employees!");
+            public void onFail(String message, int code) {
+                handlerForBadRequest(code, "employees");
             }
         };
-        handler.setHttpMethod("GET");
-        handler.setUrlResource("employees/all");
-        handler.execute(callBack, null);
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                handler.setHttpMethod("GET");
+                handler.setUrlResource("employees/all");
+                handler.execute(callBack, null);
+            }
+        });
+//        handler.setHttpMethod("GET");
+//        handler.setUrlResource("employees/all");
+//        handler.execute(callBack, null);
     }
 
     private void BFindClickListener() {
@@ -393,8 +415,8 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFail(String message) {
-                createToast("No such record!");
+            public void onFail(String message, int code) {
+                handlerForBadRequest(code, "records");
             }
         };
 
@@ -457,8 +479,8 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFail(String message) {
-                createToast("No such records!");
+            public void onFail(String message, int code) {
+                handlerForBadRequest(code, "records");
             }
         };
 
@@ -475,40 +497,62 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
 
     private void BAddClickListener() {
 
-        //TODO добавить проверку на существование
-
         CallBack<String> callBack = new CallBack<String>() {
             @Override
             public void onSuccess(String result) {
-                final DepartmentsEmployees proj = DEGson.fromJson(result, DepartmentsEmployees.class);
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        ETId.setText(proj.getId().toString());
+                Type type = new TypeToken<List<DepartmentsEmployees>>(){}.getType();
+                List<DepartmentsEmployees> list = new ArrayList<>();
+                try {
+                    list = DEGson.fromJson(result, type);
+                } catch (JsonIOException | JsonSyntaxException ex) {
+                    DepartmentsEmployees de = DEGson.fromJson(result, DepartmentsEmployees.class);
+                    list.add(de);
+                }
+                if (!list.contains(array.get(currentRecord))) {
+                    CallBack<String> call = new CallBack<String>() {
+                        @Override
+                        public void onSuccess(String result) {
+                            final DepartmentsEmployees proj = DEGson.fromJson(result, DepartmentsEmployees.class);
+                            runOnUiThread(new Runnable() {
+                                public void run() {
+                                    ETId.setText(proj.getId().toString());
+                                }
+                            });
+                            createToast("Adding completed successfully!");
+                        }
+
+                        @Override
+                        public void onFail(String message, int code) {
+                            handlerForBadRequest(code, "records"); //Adding failed
+                        }
+                    };
+
+                    if (currentDepartment == null || currentEmployee == null) {
+                        createToast("Not enough information!");
+                    } else {
+                        DepartmentsEmployees object = new DepartmentsEmployees(null, currentDepartment, currentEmployee);
+                        String json = DEGson.toJson(object);
+                        System.out.println(json);
+                        String url = "departmentsEmployees/add";
+                        handler.setUrlResource(url);
+                        handler.setHttpMethod("POST");
+                        handler.execute(call, json);
                     }
-                });
-                createToast("Adding completed successfully!");
+                } else {
+                    createToast("Record already exist!");
+                }
+
             }
 
             @Override
-            public void onFail(String message) {
-                createToast("Adding failed!");
+            public void onFail(String message, int code) {
+                handlerForBadRequest(code, "records"); //Adding failed
             }
         };
 
-        if (currentDepartment == null || currentEmployee == null) {
-            Toast toast = Toast.makeText(getApplicationContext(),
-                    "Not enough information!",  Toast.LENGTH_LONG);
-            toast.show();
-        } else {
-
-            DepartmentsEmployees object = new DepartmentsEmployees(null, currentDepartment, currentEmployee);
-            String json = DEGson.toJson(object);
-            System.out.println(json);
-            String url = "departmentsEmployees/add";
-            handler.setUrlResource(url);
-            handler.setHttpMethod("POST");
-            handler.execute(callBack, json);
-        }
+        handler.setUrlResource("departmentsEmployees/all");
+        handler.setHttpMethod("GET");
+        handler.execute(callBack, null);
     }
 
     private void BUpdateClickListener() {
@@ -527,8 +571,8 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFail(String message) {
-                createToast("Updating failed!");
+            public void onFail(String message, int code) {
+                handlerForBadRequest(code, "connection"); //Updating failed
             }
         };
 
@@ -558,6 +602,27 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
                 toast.show();
             }
         });
+    }
+
+    private void handlerForBadRequest(int code, String name) {
+        String mess;
+        switch (code) {
+            case HttpURLConnection.HTTP_NOT_FOUND: {
+                mess = "No such " + name + "!";
+                break;
+            }
+            case HttpURLConnection.HTTP_FORBIDDEN: {
+                mess = "Your token is expired!";
+                break;
+            }
+            /*case HttpURLConnection.HTTP_BAD_METHOD: {
+                mess = "You can't delete employee!";
+                break;
+            }*/
+            default:
+                mess = "Connection failed!";
+        }
+        createToast(mess);
     }
 
     private void clearFields() {

@@ -21,6 +21,7 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -210,8 +211,8 @@ public class DepartmentActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFail(String message) {
-                createToast("No such Departments!");
+            public void onFail(String message, int code) {
+                handlerForBadRequest(code);
             }
         };
 
@@ -264,8 +265,8 @@ public class DepartmentActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFail(String message) {
-                createToast("No such Departments!");
+            public void onFail(String message, int code) {
+                handlerForBadRequest(code);
             }
         };
 
@@ -281,40 +282,66 @@ public class DepartmentActivity extends AppCompatActivity {
     }
 
     private void BAddClickListener() {
-        String name = ETName.getText().toString();
-
-        //TODO добавить проверку на существование
+        final String name = ETName.getText().toString();
 
         CallBack<String> callBack = new CallBack<String>() {
             @Override
             public void onSuccess(String result) {
-                final Departments dep = departmentGson.fromJson(result, Departments.class);
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        ETId.setText(dep.getId().toString());
+                Type type = new TypeToken<List<Departments>>(){}.getType();
+                List<Departments> list = new ArrayList<>();
+                try {
+                    list = departmentGson.fromJson(result, type);
+                } catch (JsonIOException | JsonSyntaxException ex) {
+                    Departments dep = departmentGson.fromJson(result, Departments.class);
+                    list.add(dep);
+                }
+
+                if (!list.contains(array.get(currentRecord))) {
+                    CallBack<String> callBack = new CallBack<String>() {
+                        @Override
+                        public void onSuccess(String result) {
+                            final Departments dep = departmentGson.fromJson(result, Departments.class);
+                            runOnUiThread(new Runnable() {
+                                public void run() {
+                                    ETId.setText(dep.getId().toString());
+                                }
+                            });
+                            createToast("Adding completed successfully!");
+                        }
+
+                        @Override
+                        public void onFail(String message, int code) {
+                            handlerForBadRequest(code); //Adding failed
+                        }
+                    };
+
+                    if (name.isEmpty()) {
+                        Toast toast = Toast.makeText(getApplicationContext(),
+                                "Not enough information!",  Toast.LENGTH_LONG);
+                        toast.show();
+                    } else {
+                        Departments dep = new Departments(null, name);
+                        String json = departmentGson.toJson(dep);
+                        String url = "departments/add";
+                        handler.setUrlResource(url);
+                        handler.setHttpMethod("POST");
+                        handler.execute(callBack, json);
                     }
-                });
-                createToast("Adding completed successfully!");
+                } else {
+                    createToast("Department already exist!");
+                }
+
             }
 
             @Override
-            public void onFail(String message) {
-                createToast("Adding failed!");
+            public void onFail(String message, int code) {
+                handlerForBadRequest(code); //Adding failed
             }
         };
 
-        if (name.isEmpty()) {
-            Toast toast = Toast.makeText(getApplicationContext(),
-                    "Not enough information!",  Toast.LENGTH_LONG);
-            toast.show();
-        } else {
-            Departments dep = new Departments(null, name);
-            String json = departmentGson.toJson(dep);
-            String url = "departments/add";
-            handler.setUrlResource(url);
-            handler.setHttpMethod("POST");
-            handler.execute(callBack, json);
-        }
+        handler.setUrlResource("departments/all");
+        handler.setHttpMethod("GET");
+        handler.execute(callBack, null);
     }
 
     private void BUpdateClickListener() {
@@ -332,8 +359,8 @@ public class DepartmentActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFail(String message) {
-                createToast("Updating failed!");
+            public void onFail(String message, int code) {
+                handlerForBadRequest(code); //Updating failed
             }
         };
 
@@ -363,6 +390,27 @@ public class DepartmentActivity extends AppCompatActivity {
                 toast.show();
             }
         });
+    }
+
+    private void handlerForBadRequest(int code) {
+        String mess;
+        switch (code) {
+            case HttpURLConnection.HTTP_NOT_FOUND: {
+                mess = "No such departments!";
+                break;
+            }
+            case HttpURLConnection.HTTP_FORBIDDEN: {
+                mess = "Your token is expired!";
+                break;
+            }
+            case HttpURLConnection.HTTP_BAD_METHOD: {
+                mess = "You can't delete department!";
+                break;
+            }
+            default:
+                mess = "Connection failed!";
+        }
+        createToast(mess);
     }
 
     private void clearFields() {

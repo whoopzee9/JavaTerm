@@ -1,6 +1,7 @@
 package com.course.controller;
 
 import com.course.entity.Projects;
+import com.course.exception.InvalidJwtAuthenticationException;
 import com.course.exception.ProjectNotFoundException;
 import com.course.service.ProjectsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,11 @@ public class ProjectsController {
 
     @PostMapping(value = "/add", consumes = "application/json", produces = "application/json")
     public ResponseEntity<Projects> addProject(@RequestBody Projects projects) {
-        return new ResponseEntity<>(projectsService.addProjects(projects), HttpStatus.CREATED);
+        try {
+            return new ResponseEntity<>(projectsService.addProjects(projects), HttpStatus.CREATED);
+        } catch (InvalidJwtAuthenticationException ex) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
+        }
     }
 
     @PutMapping(value = "/update", consumes = "application/json", produces = "application/json")
@@ -28,12 +33,18 @@ public class ProjectsController {
             return new ResponseEntity<>(projectsService.updateProjects(projects), HttpStatus.OK);
         } catch (ProjectNotFoundException ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        } catch (InvalidJwtAuthenticationException ex) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
         }
     }
 
     @GetMapping("/all")
     public ResponseEntity<List<Projects>> getAllProjects() {
-        return new ResponseEntity<>(projectsService.projectsList(), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(projectsService.projectsList(), HttpStatus.OK);
+        } catch (InvalidJwtAuthenticationException ex) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
+        }
     }
 
     @GetMapping("/getById/{id}")
@@ -42,6 +53,8 @@ public class ProjectsController {
             return new ResponseEntity<>(projectsService.findProjectsById(id), HttpStatus.OK);
         } catch (ProjectNotFoundException ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        } catch (InvalidJwtAuthenticationException ex) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
         }
     }
 
@@ -51,6 +64,8 @@ public class ProjectsController {
             return new ResponseEntity<>(projectsService.findProjectsByName(name), HttpStatus.OK);
         } catch (ProjectNotFoundException ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        } catch (InvalidJwtAuthenticationException ex) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
         }
     }
 
@@ -60,6 +75,8 @@ public class ProjectsController {
             return new ResponseEntity<>(projectsService.findByDepartmentId(id), HttpStatus.OK);
         } catch (ProjectNotFoundException ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        } catch (InvalidJwtAuthenticationException ex) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
         }
     }
 
@@ -69,6 +86,8 @@ public class ProjectsController {
             return new ResponseEntity<>(projectsService.findByDepartmentName(name), HttpStatus.OK);
         } catch (ProjectNotFoundException ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        } catch (InvalidJwtAuthenticationException ex) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
         }
     }
 
@@ -79,6 +98,8 @@ public class ProjectsController {
             return new ResponseEntity(HttpStatus.OK);
         } catch (ProjectNotFoundException ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        } catch (InvalidJwtAuthenticationException ex) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
         }
     }
 
@@ -89,6 +110,8 @@ public class ProjectsController {
             return new ResponseEntity(HttpStatus.OK);
         } catch (ProjectNotFoundException ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        } catch (InvalidJwtAuthenticationException ex) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
         }
     }
 
