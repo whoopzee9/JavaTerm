@@ -678,6 +678,7 @@ public class ProjectActivity extends AppCompatActivity {
     private void setFieldsWithCurrentProject(final int num) {
         runOnUiThread(new Runnable() {
             public void run() {
+                departmentAdapter.setFlag(true);
                 Projects object = array.get(num);
                 ETId.setText(object.getId().toString());
                 ETName.setText(object.getName());

@@ -633,6 +633,8 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
     private void setFieldsWithCurrentDE(final int num) {
         runOnUiThread(new Runnable() {
             public void run() {
+                departmentAdapter.setFlag(true);
+                employeeAdapter.setFlag(true);
                 DepartmentsEmployees object = array.get(num);
                 ETId.setText(object.getId().toString());
 
