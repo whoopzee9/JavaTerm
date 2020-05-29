@@ -1,7 +1,9 @@
 package com.example.clientjavaterm;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -161,6 +163,7 @@ public class EmployeeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 BFindClickListener();
+                clearFocuses();
             }
         });
 
@@ -168,6 +171,7 @@ public class EmployeeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 BAddClickListener();
+                clearFocuses();
             }
         });
 
@@ -175,6 +179,7 @@ public class EmployeeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 BDeleteClickListener();
+                clearFocuses();
             }
         });
 
@@ -182,6 +187,7 @@ public class EmployeeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 BUpdateClickListener();
+                clearFocuses();
             }
         });
 
@@ -192,6 +198,7 @@ public class EmployeeActivity extends AppCompatActivity {
                     currentRecord--;
                     setFieldsWithCurrentEmployee(currentRecord);
                 }
+                clearFocuses();
             }
         });
 
@@ -202,6 +209,7 @@ public class EmployeeActivity extends AppCompatActivity {
                     currentRecord++;
                     setFieldsWithCurrentEmployee(currentRecord);
                 }
+                clearFocuses();
             }
         });
 
@@ -209,6 +217,7 @@ public class EmployeeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 clearFields();
+                clearFocuses();
             }
         });
     }
@@ -316,6 +325,7 @@ public class EmployeeActivity extends AppCompatActivity {
             createToast("Can't add. Please try to click 'New' for new one, or 'Update'");
             return;
         }
+
 
         CallBack<String> callBack = new CallBack<String>() {
             @Override
@@ -457,6 +467,20 @@ public class EmployeeActivity extends AppCompatActivity {
         ETPatherName.setText("");
         ETPosition.setText("");
         ETSalary.setText("");
+    }
+
+    private void clearFocuses() {
+        ETId.clearFocus();
+        ETLastName.clearFocus();
+        ETFirstName.clearFocus();
+        ETPatherName.clearFocus();
+        ETPosition.clearFocus();
+        ETSalary.clearFocus();
+        ETFindLastNameOrId.clearFocus();
+        ETFindPatherName.clearFocus();
+        ETFindFirstName.clearFocus();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(BAdd.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
     private void setFieldsWithCurrentEmployee(final int num) {

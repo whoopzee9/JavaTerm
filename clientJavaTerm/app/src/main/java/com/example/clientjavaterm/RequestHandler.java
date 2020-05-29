@@ -1,5 +1,6 @@
 package com.example.clientjavaterm;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -18,24 +19,12 @@ public class RequestHandler {
         setBaseUrl(baseUrl);
     }
 
-    public String getToken() {
-        return token;
-    }
-
     public void setToken(String token) {
         this.token = token;
     }
 
-    public String getUrlResource() {
-        return urlResource;
-    }
-
     public void setUrlResource(String urlResource) {
         this.urlResource = urlResource;
-    }
-
-    public String getHttpMethod() {
-        return httpMethod;
     }
 
     public void setHttpMethod(String httpMethod) {
@@ -94,7 +83,7 @@ public class RequestHandler {
                     }
                     connection.disconnect();
 
-                } catch (Exception e) { //TODO определить исключения
+                } catch (IOException e) {
                     e.printStackTrace();
                     callBack.onFailure("error " + e.getMessage());
                 }

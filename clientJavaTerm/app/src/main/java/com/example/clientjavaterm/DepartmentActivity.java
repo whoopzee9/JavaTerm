@@ -1,7 +1,9 @@
 package com.example.clientjavaterm;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -139,6 +141,7 @@ public class DepartmentActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 BFindClickListener();
+                clearFocuses();
             }
         });
 
@@ -146,6 +149,7 @@ public class DepartmentActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 BAddClickListener();
+                clearFocuses();
             }
         });
 
@@ -153,6 +157,7 @@ public class DepartmentActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 BDeleteClickListener();
+                clearFocuses();
             }
         });
 
@@ -160,6 +165,7 @@ public class DepartmentActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 BUpdateClickListener();
+                clearFocuses();
             }
         });
 
@@ -170,6 +176,7 @@ public class DepartmentActivity extends AppCompatActivity {
                     currentRecord--;
                     setFieldsWithCurrentDepartment(currentRecord);
                 }
+                clearFocuses();
             }
         });
 
@@ -180,6 +187,7 @@ public class DepartmentActivity extends AppCompatActivity {
                     currentRecord++;
                     setFieldsWithCurrentDepartment(currentRecord);
                 }
+                clearFocuses();
             }
         });
 
@@ -187,6 +195,7 @@ public class DepartmentActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 clearFields();
+                clearFocuses();
             }
         });
     }
@@ -416,6 +425,14 @@ public class DepartmentActivity extends AppCompatActivity {
     private void clearFields() {
         ETId.setText("");
         ETName.setText("");
+    }
+
+    private void clearFocuses() {
+        ETId.clearFocus();
+        ETName.clearFocus();
+        ETFindNameOrId.clearFocus();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(BAdd.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
     private void setFieldsWithCurrentDepartment(final int num) {

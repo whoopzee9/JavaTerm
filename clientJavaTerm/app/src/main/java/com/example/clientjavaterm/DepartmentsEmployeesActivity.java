@@ -1,9 +1,11 @@
 package com.example.clientjavaterm;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -233,6 +235,7 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 BFindClickListener();
+                clearFocuses();
             }
         });
 
@@ -240,6 +243,7 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 BAddClickListener();
+                clearFocuses();
             }
         });
 
@@ -247,6 +251,7 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 BDeleteClickListener();
+                clearFocuses();
             }
         });
 
@@ -254,6 +259,7 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 BUpdateClickListener();
+                clearFocuses();
             }
         });
 
@@ -264,6 +270,7 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
                     currentRecord--;
                     setFieldsWithCurrentDE(currentRecord);
                 }
+                clearFocuses();
             }
         });
 
@@ -274,6 +281,7 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
                     currentRecord++;
                     setFieldsWithCurrentDE(currentRecord);
                 }
+                clearFocuses();
             }
         });
 
@@ -609,6 +617,15 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
     private void clearFields() {
         ETId.setText("");
         //TODO сделать сброс для спиннеров
+    }
+
+    private void clearFocuses() {
+        ETId.clearFocus();
+        ETFindLastNameOrId.clearFocus();
+        ETFindPatherName.clearFocus();
+        ETFindFirstName.clearFocus();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(BAdd.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
     private void setFieldsWithCurrentDE(final int num) {
