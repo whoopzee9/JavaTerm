@@ -9,7 +9,7 @@ import java.util.UUID;
 @ConfigurationProperties(prefix = "jwt")
 public class JwtProperties {
     private final String secretKey = UUID.randomUUID().toString();
-    private long validityInMs = 180000;
+    private long validityInMs = 3600000;
 
     public String getSecretKey() {
         return secretKey;
