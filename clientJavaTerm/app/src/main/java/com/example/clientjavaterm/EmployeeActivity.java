@@ -319,7 +319,13 @@ public class EmployeeActivity extends AppCompatActivity {
                 Type type = new TypeToken<Employees>(){}.getType();
                 List<Employees> list = converter.getListFromResult(result, listType, type);
 
-                if (!list.contains(array.get(currentRecord))) {
+                if (last.isEmpty() || first.isEmpty() || pather.isEmpty() || position.isEmpty() || salary.isEmpty()) {
+                    createToast("Not enough information!");
+                    return;
+                }
+                Employees employee = new Employees(null, first, last, pather, position, Float.parseFloat(salary));
+
+                if (!list.contains(employee)) {
                     CallBack<String> call = new CallBack<String>() {
                         @Override
                         public void onSuccess(String result) {
@@ -327,6 +333,10 @@ public class EmployeeActivity extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 public void run() {
                                     ETId.setText(empl.getId().toString());
+                                    arrayLength++;
+                                    currentRecord = arrayLength - 1;
+                                    array.add(empl);
+                                    setFieldsWithCurrentEmployee(currentRecord);
                                 }
                             });
                             createToast("Adding completed successfully!");
@@ -338,16 +348,11 @@ public class EmployeeActivity extends AppCompatActivity {
                         }
                     };
 
-                    if (last.isEmpty() || first.isEmpty() || pather.isEmpty() || position.isEmpty() || salary.isEmpty()) {
-                        createToast("Not enough information!");
-                    } else {
-                        Employees empl = new Employees(null, first, last, pather, position, Float.parseFloat(salary));
-                        String json = employeeGson.toJson(empl);
-                        String url = "employees/add";
-                        handler.setUrlResource(url);
-                        handler.setHttpMethod("POST");
-                        handler.execute(call, json);
-                    }
+                    String json = employeeGson.toJson(employee);
+                    String url = "employees/add";
+                    handler.setUrlResource(url);
+                    handler.setHttpMethod("POST");
+                    handler.execute(call, json);
                 } else {
                     createToast("Employee already exist!");
                 }

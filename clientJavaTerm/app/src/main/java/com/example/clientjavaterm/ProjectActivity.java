@@ -486,7 +486,33 @@ public class ProjectActivity extends AppCompatActivity {
                 Type type = new TypeToken<Projects>(){}.getType();
                 List<Projects> list = converter.getListFromResult(result, listType, type);
 
-                if (!list.contains(array.get(currentRecord))) {
+                if (name.isEmpty() || cost.isEmpty() || dateBeg.isEmpty() || dateEnd.isEmpty() ||
+                        dateEndReal.isEmpty() || currentDepartment == null) {
+                    createToast("Not enough information!");
+                    return;
+                }
+                Float newCost = Float.parseFloat(cost);
+                Date beg = null;
+                Date end = null;
+                Date endReal = null;
+                try {
+                    java.util.Date utilDate = new SimpleDateFormat( "dd.MM.yyyy" ).parse(dateBeg);
+                    beg = new Date(utilDate.getTime());
+                    utilDate = new SimpleDateFormat( "dd.MM.yyyy" ).parse(dateEnd);
+                    end = new Date(utilDate.getTime());
+                    utilDate = new SimpleDateFormat( "dd.MM.yyyy" ).parse(dateEndReal);
+                    endReal = new Date(utilDate.getTime());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                if (end.getTime() < beg.getTime() || endReal.getTime() < beg.getTime()) {
+                    createToast("wrong dates!");
+                    return;
+                }
+
+                Projects object = new Projects(null, name, newCost, currentDepartment, beg, end, endReal);
+
+                if (!list.contains(object)) {
                     CallBack<String> call = new CallBack<String>() {
                         @Override
                         public void onSuccess(String result) {
@@ -494,6 +520,10 @@ public class ProjectActivity extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 public void run() {
                                     ETId.setText(proj.getId().toString());
+                                    arrayLength++;
+                                    currentRecord = arrayLength - 1;
+                                    array.add(proj);
+                                    setFieldsWithCurrentProject(currentRecord);
                                 }
                             });
                             createToast("Adding completed successfully!");
@@ -505,37 +535,12 @@ public class ProjectActivity extends AppCompatActivity {
                         }
                     };
 
-                    if (name.isEmpty() || cost.isEmpty() || dateBeg.isEmpty() || dateEnd.isEmpty() ||
-                            dateEndReal.isEmpty() || currentDepartment == null) {
-                        createToast("Not enough information!");
-                    } else {
-                        Float newCost = Float.parseFloat(cost);
-                        Date beg = null;
-                        Date end = null;
-                        Date endReal = null;
-                        try {
-                            java.util.Date utilDate = new SimpleDateFormat( "dd.MM.yyyy" ).parse(dateBeg);
-                            beg = new Date(utilDate.getTime());
-                            utilDate = new SimpleDateFormat( "dd.MM.yyyy" ).parse(dateEnd);
-                            end = new Date(utilDate.getTime());
-                            utilDate = new SimpleDateFormat( "dd.MM.yyyy" ).parse(dateEndReal);
-                            endReal = new Date(utilDate.getTime());
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                        if (end.getTime() < beg.getTime() || endReal.getTime() < beg.getTime()) {
-                            createToast("wrong dates!");
-                            return;
-                        }
-
-                        Projects object = new Projects(null, name, newCost, currentDepartment, beg, end, endReal);
-                        String json = projectGson.toJson(object);
-                        System.out.println(json);
-                        String url = "projects/add";
-                        handler.setUrlResource(url);
-                        handler.setHttpMethod("POST");
-                        handler.execute(call, json);
-                    }
+                    String json = projectGson.toJson(object);
+                    System.out.println(json);
+                    String url = "projects/add";
+                    handler.setUrlResource(url);
+                    handler.setHttpMethod("POST");
+                    handler.execute(call, json);
                 } else {
                     createToast("Project already exist!");
                 }

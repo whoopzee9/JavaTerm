@@ -480,14 +480,25 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
                 Type listType = new TypeToken<List<DepartmentsEmployees>>(){}.getType();
                 Type type = new TypeToken<DepartmentsEmployees>(){}.getType();
                 List<DepartmentsEmployees> list = converter.getListFromResult(result, listType, type);
-                if (!list.contains(array.get(currentRecord))) {
+
+                if (currentDepartment == null || currentEmployee == null) {
+                    createToast("Not enough information!");
+                    return;
+                }
+                DepartmentsEmployees object = new DepartmentsEmployees(null, currentDepartment, currentEmployee);
+
+                if (!list.contains(object)) {
                     CallBack<String> call = new CallBack<String>() {
                         @Override
                         public void onSuccess(String result) {
-                            final DepartmentsEmployees proj = DEGson.fromJson(result, DepartmentsEmployees.class);
+                            final DepartmentsEmployees de = DEGson.fromJson(result, DepartmentsEmployees.class);
                             runOnUiThread(new Runnable() {
                                 public void run() {
-                                    ETId.setText(proj.getId().toString());
+                                    ETId.setText(de.getId().toString());
+                                    arrayLength++;
+                                    currentRecord = arrayLength - 1;
+                                    array.add(de);
+                                    setFieldsWithCurrentDE(currentRecord);
                                 }
                             });
                             createToast("Adding completed successfully!");
@@ -499,17 +510,12 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
                         }
                     };
 
-                    if (currentDepartment == null || currentEmployee == null) {
-                        createToast("Not enough information!");
-                    } else {
-                        DepartmentsEmployees object = new DepartmentsEmployees(null, currentDepartment, currentEmployee);
-                        String json = DEGson.toJson(object);
-                        System.out.println(json);
-                        String url = "departmentsEmployees/add";
-                        handler.setUrlResource(url);
-                        handler.setHttpMethod("POST");
-                        handler.execute(call, json);
-                    }
+                    String json = DEGson.toJson(object);
+                    System.out.println(json);
+                    String url = "departmentsEmployees/add";
+                    handler.setUrlResource(url);
+                    handler.setHttpMethod("POST");
+                    handler.execute(call, json);
                 } else {
                     createToast("Record already exist!");
                 }

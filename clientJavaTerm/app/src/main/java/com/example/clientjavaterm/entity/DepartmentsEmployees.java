@@ -48,8 +48,7 @@ public class DepartmentsEmployees {
         }
 
         DepartmentsEmployees de = (DepartmentsEmployees) obj;
-        return id.equals(de.id) &&
-                departments.equals(de.departments) &&
+        return departments.equals(de.departments) &&
                 employees.equals(de.employees);
     }
 }

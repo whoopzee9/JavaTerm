@@ -85,8 +85,7 @@ public class Employees {
         }
 
         Employees emp = (Employees) obj;
-        return id.equals(emp.id) &&
-                lastName.equals(emp.lastName) &&
+        return lastName.equals(emp.lastName) &&
                 firstName.equals(emp.firstName) &&
                 patherName.equals(emp.patherName) &&
                 position.equals(emp.position) &&

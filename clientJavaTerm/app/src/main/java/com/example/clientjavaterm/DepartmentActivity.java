@@ -289,8 +289,14 @@ public class DepartmentActivity extends AppCompatActivity {
                 Type listType = new TypeToken<List<Departments>>(){}.getType();
                 Type type = new TypeToken<Departments>(){}.getType();
                 List<Departments> list = converter.getListFromResult(result, listType, type);
+                Departments departments = new Departments(null, name);
 
-                if (!list.contains(array.get(currentRecord))) {
+                if (name.isEmpty()) {
+                    createToast("Not enough information!");
+                    return;
+                }
+
+                if (!list.contains(departments)) {
                     CallBack<String> callBack = new CallBack<String>() {
                         @Override
                         public void onSuccess(String result) {
@@ -298,6 +304,10 @@ public class DepartmentActivity extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 public void run() {
                                     ETId.setText(dep.getId().toString());
+                                    arrayLength++;
+                                    currentRecord = arrayLength - 1;
+                                    array.add(dep);
+                                    setFieldsWithCurrentDepartment(currentRecord);
                                 }
                             });
                             createToast("Adding completed successfully!");
@@ -309,16 +319,11 @@ public class DepartmentActivity extends AppCompatActivity {
                         }
                     };
 
-                    if (name.isEmpty()) {
-                        createToast("Not enough information!");
-                    } else {
-                        Departments dep = new Departments(null, name);
-                        String json = departmentGson.toJson(dep);
-                        String url = "departments/add";
-                        handler.setUrlResource(url);
-                        handler.setHttpMethod("POST");
-                        handler.execute(callBack, json);
-                    }
+                    String json = departmentGson.toJson(departments);
+                    String url = "departments/add";
+                    handler.setUrlResource(url);
+                    handler.setHttpMethod("POST");
+                    handler.execute(callBack, json);
                 } else {
                     createToast("Department already exist!");
                 }

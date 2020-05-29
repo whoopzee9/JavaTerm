@@ -90,8 +90,7 @@ public class Projects {
         }
 
         Projects proj = (Projects) obj;
-        return id.equals(proj.id) &&
-                name.equals(proj.name) &&
+        return name.equals(proj.name) &&
                 cost.equals(proj.cost) &&
                 departments.equals(proj.departments) &&
                 dateBeg.equals(proj.dateBeg) &&

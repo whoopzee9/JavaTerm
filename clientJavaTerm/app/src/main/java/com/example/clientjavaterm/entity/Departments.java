@@ -45,7 +45,6 @@ public class Departments {
         }
 
         Departments dep = (Departments) obj;
-        return id.equals(dep.id) &&
-                name.equals(dep.name);
+        return name.equals(dep.name);
     }
 }
