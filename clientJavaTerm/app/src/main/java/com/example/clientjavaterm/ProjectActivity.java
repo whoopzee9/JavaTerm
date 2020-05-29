@@ -453,6 +453,7 @@ public class ProjectActivity extends AppCompatActivity {
                         }
                     });
                 }
+                createToast("Deleted completed successfully!");
             }
 
             @Override

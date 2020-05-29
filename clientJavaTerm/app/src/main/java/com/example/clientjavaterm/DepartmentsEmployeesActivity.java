@@ -453,6 +453,7 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
                         }
                     });
                 }
+                createToast("Deleted completed successfully!");
             }
 
             @Override

@@ -286,6 +286,7 @@ public class EmployeeActivity extends AppCompatActivity {
                         }
                     });
                 }
+                createToast("Deleted completed successfully!");
             }
 
             @Override

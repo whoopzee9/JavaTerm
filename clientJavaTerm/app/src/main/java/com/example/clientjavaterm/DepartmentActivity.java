@@ -261,6 +261,7 @@ public class DepartmentActivity extends AppCompatActivity {
                         }
                     });
                 }
+                createToast("Deleted completed successfully!");
             }
 
             @Override
