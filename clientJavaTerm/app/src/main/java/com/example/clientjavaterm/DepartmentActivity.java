@@ -16,14 +16,15 @@ import com.example.clientjavaterm.converters.DepartmentConverter;
 import com.example.clientjavaterm.entity.Departments;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.text.InputType.TYPE_CLASS_NUMBER;
+import static android.text.InputType.TYPE_CLASS_TEXT;
 
 public class DepartmentActivity extends AppCompatActivity {
 
@@ -115,12 +116,14 @@ public class DepartmentActivity extends AppCompatActivity {
                     }
                     case 2: {
                         ETFindNameOrId.setVisibility(View.VISIBLE);
+                        ETFindNameOrId.setInputType(TYPE_CLASS_NUMBER);
                         ETFindNameOrId.setHint("id");
                         spinnerItem = 2;
                         break;
                     }
                     case 3: {
                         ETFindNameOrId.setVisibility(View.VISIBLE);
+                        ETFindNameOrId.setInputType(TYPE_CLASS_TEXT);
                         ETFindNameOrId.setHint("name");
                         spinnerItem = 3;
                         break;
@@ -192,14 +195,10 @@ public class DepartmentActivity extends AppCompatActivity {
         CallBack<String> callBack = new CallBack<String>() {
             @Override
             public void onSuccess(String result) {
-                Type type = new TypeToken<List<Departments>>(){}.getType();
-                List<Departments> list = new ArrayList<>();
-                try {
-                    list = departmentGson.fromJson(result, type);
-                } catch (JsonIOException | JsonSyntaxException ex) {
-                    Departments empl = departmentGson.fromJson(result, Departments.class);
-                    list.add(empl);
-                }
+                ResultConverter<Departments> converter = new ResultConverter<>(departmentGson);
+                Type listType = new TypeToken<List<Departments>>(){}.getType();
+                Type type = new TypeToken<Departments>(){}.getType();
+                List<Departments> list = converter.getListFromResult(result, listType, type);
                 if (list.isEmpty()) {
                     createToast("Nothing found!");
                 } else {
@@ -271,8 +270,7 @@ public class DepartmentActivity extends AppCompatActivity {
         };
 
         if (id.isEmpty()) {
-            Toast toast = Toast.makeText(getApplicationContext(), "Enter Id",  Toast.LENGTH_LONG);
-            toast.show();
+            createToast("Enter id!");
         } else {
             String url = "departments/deleteById/" + id;
             handler.setUrlResource(url);
@@ -287,14 +285,10 @@ public class DepartmentActivity extends AppCompatActivity {
         CallBack<String> callBack = new CallBack<String>() {
             @Override
             public void onSuccess(String result) {
-                Type type = new TypeToken<List<Departments>>(){}.getType();
-                List<Departments> list = new ArrayList<>();
-                try {
-                    list = departmentGson.fromJson(result, type);
-                } catch (JsonIOException | JsonSyntaxException ex) {
-                    Departments dep = departmentGson.fromJson(result, Departments.class);
-                    list.add(dep);
-                }
+                ResultConverter<Departments> converter = new ResultConverter<>(departmentGson);
+                Type listType = new TypeToken<List<Departments>>(){}.getType();
+                Type type = new TypeToken<Departments>(){}.getType();
+                List<Departments> list = converter.getListFromResult(result, listType, type);
 
                 if (!list.contains(array.get(currentRecord))) {
                     CallBack<String> callBack = new CallBack<String>() {
@@ -316,9 +310,7 @@ public class DepartmentActivity extends AppCompatActivity {
                     };
 
                     if (name.isEmpty()) {
-                        Toast toast = Toast.makeText(getApplicationContext(),
-                                "Not enough information!",  Toast.LENGTH_LONG);
-                        toast.show();
+                        createToast("Not enough information!");
                     } else {
                         Departments dep = new Departments(null, name);
                         String json = departmentGson.toJson(dep);
@@ -365,13 +357,10 @@ public class DepartmentActivity extends AppCompatActivity {
         };
 
         if (id.isEmpty()) {
-            Toast toast = Toast.makeText(getApplicationContext(), "No id!",  Toast.LENGTH_LONG);
-            toast.show();
+            createToast("No id!");
         } else {
             if (name.isEmpty()) {
-                Toast toast = Toast.makeText(getApplicationContext(),
-                        "Not enough information!",  Toast.LENGTH_LONG);
-                toast.show();
+                createToast("Not enough information!");
             } else {
                 Departments object = new Departments(Long.parseLong(id), name);
                 String json = departmentGson.toJson(object);
@@ -408,7 +397,7 @@ public class DepartmentActivity extends AppCompatActivity {
                 break;
             }
             default:
-                mess = "Connection failed!";
+                mess = "Connection failed or token is expired!";
         }
         createToast(mess);
     }

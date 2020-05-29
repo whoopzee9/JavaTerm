@@ -17,23 +17,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.clientjavaterm.converters.DepartmentConverter;
 import com.example.clientjavaterm.converters.DepartmentsEmployeesConverter;
 import com.example.clientjavaterm.converters.EmployeeConverter;
-import com.example.clientjavaterm.converters.ProjectConverter;
 import com.example.clientjavaterm.entity.Departments;
 import com.example.clientjavaterm.entity.DepartmentsEmployees;
 import com.example.clientjavaterm.entity.Employees;
-import com.example.clientjavaterm.entity.Projects;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.text.InputType.TYPE_CLASS_NUMBER;
+import static android.text.InputType.TYPE_CLASS_TEXT;
 
 public class DepartmentsEmployeesActivity extends AppCompatActivity {
 
@@ -60,10 +57,8 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
     private int arrayLength;
     private Departments currentDepartment;
     private CustomSpinnerAdapter<Departments> departmentAdapter;
-    private int currentDepartmentIndex;
     private Employees currentEmployee;
     private CustomSpinnerAdapter<Employees> employeeAdapter;
-    private int currentEmployeeIndex;
     private RequestHandler handler;
     private DepartmentsEmployeesConverter converter;
     private Gson DEGson;
@@ -141,6 +136,7 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
                     }
                     case 2: {
                         ETFindLastNameOrId.setVisibility(View.VISIBLE);
+                        ETFindLastNameOrId.setInputType(TYPE_CLASS_NUMBER);
                         ETFindFirstName.setVisibility(View.GONE);
                         ETFindPatherName.setVisibility(View.GONE);
                         ETFindLastNameOrId.setHint("id");
@@ -149,6 +145,7 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
                     }
                     case 3: {
                         ETFindLastNameOrId.setVisibility(View.VISIBLE);
+                        ETFindLastNameOrId.setInputType(TYPE_CLASS_TEXT);
                         ETFindFirstName.setVisibility(View.VISIBLE);
                         ETFindPatherName.setVisibility(View.VISIBLE);
                         ETFindLastNameOrId.setHint("last name");
@@ -157,6 +154,7 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
                     }
                     case 4: {
                         ETFindLastNameOrId.setVisibility(View.VISIBLE);
+                        ETFindLastNameOrId.setInputType(TYPE_CLASS_NUMBER);
                         ETFindFirstName.setVisibility(View.GONE);
                         ETFindPatherName.setVisibility(View.GONE);
                         ETFindLastNameOrId.setHint("id");
@@ -165,6 +163,7 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
                     }
                     case 5: {
                         ETFindLastNameOrId.setVisibility(View.VISIBLE);
+                        ETFindLastNameOrId.setInputType(TYPE_CLASS_TEXT);
                         ETFindFirstName.setVisibility(View.GONE);
                         ETFindPatherName.setVisibility(View.GONE);
                         ETFindLastNameOrId.setHint("name");
@@ -188,7 +187,6 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 departmentAdapter.setFlag(true);
                 currentDepartment = (Departments) parent.getItemAtPosition(position);
-                currentDepartmentIndex = position;
             }
 
             @Override
@@ -214,7 +212,6 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 employeeAdapter.setFlag(true);
                 currentEmployee = (Employees) parent.getItemAtPosition(position);
-                currentEmployeeIndex = position;
             }
 
             @Override
@@ -300,14 +297,10 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
                 GsonBuilder builder = new GsonBuilder();
                 builder.registerTypeAdapter(lConverter.getConverterClass(), lConverter);
                 Gson departmentGson = builder.create();
-                Type type = new TypeToken<List<Departments>>(){}.getType();
-                List<Departments> list = new ArrayList<>();
-                try {
-                    list = departmentGson.fromJson(result, type);
-                } catch (JsonIOException | JsonSyntaxException ex) {
-                    Departments dep = departmentGson.fromJson(result, Departments.class);
-                    list.add(dep);
-                }
+                ResultConverter<Departments> converter = new ResultConverter<>(departmentGson);
+                Type listType = new TypeToken<List<Departments>>(){}.getType();
+                Type type = new TypeToken<Departments>(){}.getType();
+                List<Departments> list = converter.getListFromResult(result, listType, type);
                 if (!list.isEmpty()) {
 
                     final List<Departments> finalList = list;
@@ -319,8 +312,6 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
                             departmentAdapter.notifyDataSetChanged();
                         }
                     });
-                    //setFieldsWithCurrentProject(0);
-                    //createToast("Nothing found!");
                 }
             }
 
@@ -337,9 +328,6 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
                 handler.execute(callBack, null);
             }
         });
-//        handler.setHttpMethod("GET");
-//        handler.setUrlResource("departments/all");
-//        handler.execute(callBack, null);
     }
 
     private void updateEmployeeSpinner() {
@@ -351,14 +339,10 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
                 GsonBuilder builder = new GsonBuilder();
                 builder.registerTypeAdapter(lConverter.getConverterClass(), lConverter);
                 Gson employeeGson = builder.create();
-                Type type = new TypeToken<List<Employees>>(){}.getType();
-                List<Employees> list = new ArrayList<>();
-                try {
-                    list = employeeGson.fromJson(result, type);
-                } catch (JsonIOException | JsonSyntaxException ex) {
-                    Employees dep = employeeGson.fromJson(result, Employees.class);
-                    list.add(dep);
-                }
+                ResultConverter<Employees> converter = new ResultConverter<>(employeeGson);
+                Type listType = new TypeToken<List<Employees>>(){}.getType();
+                Type type = new TypeToken<Employees>(){}.getType();
+                List<Employees> list = converter.getListFromResult(result, listType, type);
                 if (!list.isEmpty()) {
 
                     final List<Employees> finalList = list;
@@ -387,23 +371,16 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
                 handler.execute(callBack, null);
             }
         });
-//        handler.setHttpMethod("GET");
-//        handler.setUrlResource("employees/all");
-//        handler.execute(callBack, null);
     }
 
     private void BFindClickListener() {
         CallBack<String> callBack = new CallBack<String>() {
             @Override
             public void onSuccess(String result) {
-                Type type = new TypeToken<List<DepartmentsEmployees>>(){}.getType();
-                List<DepartmentsEmployees> list = new ArrayList<>();
-                try {
-                    list = DEGson.fromJson(result, type);
-                } catch (JsonIOException | JsonSyntaxException ex) {
-                    DepartmentsEmployees de = DEGson.fromJson(result, DepartmentsEmployees.class);
-                    list.add(de);
-                }
+                ResultConverter<DepartmentsEmployees> converter = new ResultConverter<>(DEGson);
+                Type listType = new TypeToken<List<DepartmentsEmployees>>(){}.getType();
+                Type type = new TypeToken<DepartmentsEmployees>(){}.getType();
+                List<DepartmentsEmployees> list = converter.getListFromResult(result, listType, type);
                 if (list.isEmpty()) {
                     createToast("Nothing found!");
                 } else {
@@ -485,8 +462,7 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
         };
 
         if (id.isEmpty()) {
-            Toast toast = Toast.makeText(getApplicationContext(), "Enter Id",  Toast.LENGTH_LONG);
-            toast.show();
+            createToast("Enter Id");
         } else {
             String url = "departmentsEmployees/deleteById/" + id;
             handler.setUrlResource(url);
@@ -500,14 +476,10 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
         CallBack<String> callBack = new CallBack<String>() {
             @Override
             public void onSuccess(String result) {
-                Type type = new TypeToken<List<DepartmentsEmployees>>(){}.getType();
-                List<DepartmentsEmployees> list = new ArrayList<>();
-                try {
-                    list = DEGson.fromJson(result, type);
-                } catch (JsonIOException | JsonSyntaxException ex) {
-                    DepartmentsEmployees de = DEGson.fromJson(result, DepartmentsEmployees.class);
-                    list.add(de);
-                }
+                ResultConverter<DepartmentsEmployees> converter = new ResultConverter<>(DEGson);
+                Type listType = new TypeToken<List<DepartmentsEmployees>>(){}.getType();
+                Type type = new TypeToken<DepartmentsEmployees>(){}.getType();
+                List<DepartmentsEmployees> list = converter.getListFromResult(result, listType, type);
                 if (!list.contains(array.get(currentRecord))) {
                     CallBack<String> call = new CallBack<String>() {
                         @Override
@@ -577,13 +549,10 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
         };
 
         if (id.isEmpty()) {
-            Toast toast = Toast.makeText(getApplicationContext(), "No id!",  Toast.LENGTH_LONG);
-            toast.show();
+            createToast("No id!");
         } else {
             if (currentDepartment == null || currentEmployee == null) {
-                Toast toast = Toast.makeText(getApplicationContext(),
-                        "Not enough information!",  Toast.LENGTH_LONG);
-                toast.show();
+                createToast("Not enough information!");
             } else {
                 DepartmentsEmployees object = new DepartmentsEmployees(Long.parseLong(id), currentDepartment, currentEmployee);
                 String json = DEGson.toJson(object);
@@ -620,7 +589,7 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
                 break;
             }*/
             default:
-                mess = "Connection failed!";
+                mess = "Connection failed or token is expired!";
         }
         createToast(mess);
     }

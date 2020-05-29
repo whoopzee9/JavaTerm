@@ -77,34 +77,29 @@ public class MainActivity extends AppCompatActivity {
 
     private void openEmployees() {
         Intent intent = new Intent(this, EmployeeActivity.class);
-        intent.putExtra("token", token);
-        intent.putExtra("url", urlString);
-        intent.putStringArrayListExtra("roles", rolesList);
-        startActivity(intent);
+        startActivity(putExtraInIntent(intent));
     }
 
     private void openDepartments() {
         Intent intent = new Intent(this, DepartmentActivity.class);
-        intent.putExtra("token", token);
-        intent.putExtra("url", urlString);
-        intent.putStringArrayListExtra("roles", rolesList);
-        startActivity(intent);
+        startActivity(putExtraInIntent(intent));
     }
 
     private void openProjects() {
         Intent intent = new Intent(this, ProjectActivity.class);
-        intent.putExtra("token", token);
-        intent.putExtra("url", urlString);
-        intent.putStringArrayListExtra("roles", rolesList);
-        startActivity(intent);
+        startActivity(putExtraInIntent(intent));
     }
 
     private void openDepartmentsEmployees() {
         Intent intent = new Intent(this, DepartmentsEmployeesActivity.class);
+        startActivity(putExtraInIntent(intent));
+    }
+
+    private Intent putExtraInIntent(Intent intent) {
         intent.putExtra("token", token);
         intent.putExtra("url", urlString);
         intent.putStringArrayListExtra("roles", rolesList);
-        startActivity(intent);
+        return intent;
     }
 
 }

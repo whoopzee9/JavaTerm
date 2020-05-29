@@ -19,7 +19,6 @@ import org.json.JSONObject;
 
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
-import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -61,7 +60,7 @@ public class LoginActivity extends AppCompatActivity {
                 String username = ETLogin.getText().toString();
                 String password = ETPassword.getText().toString();
                 //baseUrl = "http://localhost:8080/"; //10.0.2.2
-                baseUrl = "http://192.168.1.52:8080/";
+                baseUrl = "http://192.168.1.41:8080/";
                 //baseUrl = "http://10.0.2.2:5432/"; //emulator
                 //baseUrl = "http://192.168.1.33:8080/"; //phone
                 String urlResource;

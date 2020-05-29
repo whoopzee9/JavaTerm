@@ -1,23 +1,10 @@
 package com.example.clientjavaterm;
 
-import com.example.clientjavaterm.converters.BaseConverter;
-import com.example.clientjavaterm.entity.Employees;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
-
-import org.json.JSONObject;
-
 import java.io.OutputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class RequestHandler {
@@ -29,8 +16,6 @@ public class RequestHandler {
 
     public RequestHandler(String baseUrl) {
         setBaseUrl(baseUrl);
-        //this.urlResource = "auth/signIn";
-        //this.httpMethod = "POST";
     }
 
     public String getToken() {
@@ -80,7 +65,8 @@ public class RequestHandler {
                     connection.setRequestProperty("Accept", "application/json");
                     connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
 
-                    if (!urlResource.equals("auth/signIn") && !urlResource.equals("auth/signUp")) {
+                    if (!urlResource.equals("auth/signIn") && !urlResource.equals("auth/signUp") &&
+                            !urlResource.equals("*/all")) {
                         connection.setRequestProperty("Authorization", "Bearer " + token);
                     }
                     if (object != null && (httpMethod.equals("PUT") || httpMethod.equals("POST"))) {

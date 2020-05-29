@@ -176,7 +176,7 @@
 
     <EditText
         android:id="@+id/ETDEFindLastNameOrId"
-        android:layout_width="228dp"
+        android:layout_width="208dp"
         android:layout_height="49dp"
         android:layout_marginEnd="12dp"
         android:layout_marginBottom="36dp"

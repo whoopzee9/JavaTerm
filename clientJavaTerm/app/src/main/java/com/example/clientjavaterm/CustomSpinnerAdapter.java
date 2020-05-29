@@ -30,7 +30,6 @@ public class CustomSpinnerAdapter<T> extends ArrayAdapter<T> {
 
     @Override
     public void addAll(@NonNull Collection<? extends T> collection) {
-        //super.addAll(collection);
         list = (List<T>) collection;
     }
 
@@ -52,11 +51,8 @@ public class CustomSpinnerAdapter<T> extends ArrayAdapter<T> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         @SuppressLint("ViewHolder") View view =  View.inflate(mContext, R.layout.department_row, null);
-        //LayoutInflater inflater = LayoutInflater.from(getContext());
-        //@SuppressLint("ViewHolder") View row = inflater.inflate(R.layout.department_row, parent, false);
         TextView name = view.findViewById(R.id.TVDepartmentSpinnerRowName);
 
-        //v.setTypeface(myTypeFace);
         if (flag) {
             name.setText(list.get(position).toString());
         }
@@ -67,11 +63,8 @@ public class CustomSpinnerAdapter<T> extends ArrayAdapter<T> {
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
 
         @SuppressLint("ViewHolder") View view =  View.inflate(mContext, R.layout.department_row, null);
-        //LayoutInflater inflater = LayoutInflater.from(getContext());
-        //@SuppressLint("ViewHolder") View row = inflater.inflate(R.layout.department_row, parent, false);
         TextView name = view.findViewById(R.id.TVDepartmentSpinnerRowName);
 
-        //v.setTypeface(myTypeFace);
         name.setText(list.get(position).toString());
         return view;
     }

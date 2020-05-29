@@ -84,18 +84,6 @@ public class DepartmentsController {
         }
     }
 
-    @DeleteMapping("/deleteByName/{name}")
-    public ResponseEntity deleteDepartmentByName(@PathVariable("name") String name) {
-        try {
-            departmentsService.deleteDepartments(departmentsService.findDepartmentsByName(name).getId());
-            return new ResponseEntity(HttpStatus.OK);
-        } catch (DepartmentNotFoundException ex) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-        } catch (InvalidJwtAuthenticationException ex) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
-        }
-    }
-
     @Autowired
     public void setDepartmentsService(DepartmentsService departmentsService) {
         this.departmentsService = departmentsService;

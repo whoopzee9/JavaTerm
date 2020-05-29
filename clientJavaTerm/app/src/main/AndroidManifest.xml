@@ -27,7 +27,7 @@
             android:windowSoftInputMode="adjustResize|stateVisible"/>
         <activity
             android:name=".EmployeeActivity"
-            android:windowSoftInputMode="adjustResize|stateVisible"/>
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".DepartmentActivity"
             android:windowSoftInputMode="adjustResize|stateVisible"/>

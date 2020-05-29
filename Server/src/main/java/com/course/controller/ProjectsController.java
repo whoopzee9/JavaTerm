@@ -103,18 +103,6 @@ public class ProjectsController {
         }
     }
 
-    @DeleteMapping("/deleteByName/{name}")
-    public ResponseEntity deleteProjectByName(@PathVariable("name") String name) {
-        try {
-            projectsService.deleteProjects(projectsService.findProjectsByName(name).getId());
-            return new ResponseEntity(HttpStatus.OK);
-        } catch (ProjectNotFoundException ex) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-        } catch (InvalidJwtAuthenticationException ex) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
-        }
-    }
-
     @Autowired
     public void setProjectsService(ProjectsService projectsService) {
         this.projectsService = projectsService;

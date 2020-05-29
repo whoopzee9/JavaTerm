@@ -23,8 +23,6 @@ import com.example.clientjavaterm.entity.Departments;
 import com.example.clientjavaterm.entity.Projects;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
@@ -36,6 +34,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+
+import static android.text.InputType.TYPE_CLASS_NUMBER;
+import static android.text.InputType.TYPE_CLASS_TEXT;
 
 public class ProjectActivity extends AppCompatActivity {
 
@@ -64,7 +65,6 @@ public class ProjectActivity extends AppCompatActivity {
     private int arrayLength;
     private Departments currentDepartment;
     private CustomSpinnerAdapter<Departments> departmentAdapter;
-    private int currentDepartmentIndex;
     private RequestHandler handler;
     private ProjectConverter converter;
     private Gson projectGson;
@@ -132,7 +132,6 @@ public class ProjectActivity extends AppCompatActivity {
         ETDateEndReal.setLongClickable(false);
         ETDateEndReal.setCursorVisible(false);
 
-
         departmentAdapter = new CustomSpinnerAdapter<>(this, android.R.layout.simple_spinner_item);
 
         spinnerDepartment.setAdapter(departmentAdapter);
@@ -141,7 +140,6 @@ public class ProjectActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 currentDepartment = (Departments) parent.getItemAtPosition(position);
-                currentDepartmentIndex = position;
             }
 
             @Override
@@ -178,24 +176,28 @@ public class ProjectActivity extends AppCompatActivity {
                     }
                     case 2: {
                         ETFindNameOrId.setVisibility(View.VISIBLE);
+                        ETFindNameOrId.setInputType(TYPE_CLASS_NUMBER);
                         ETFindNameOrId.setHint("id");
                         spinnerItem = 2;
                         break;
                     }
                     case 3: {
                         ETFindNameOrId.setVisibility(View.VISIBLE);
+                        ETFindNameOrId.setInputType(TYPE_CLASS_TEXT);
                         ETFindNameOrId.setHint("name");
                         spinnerItem = 3;
                         break;
                     }
                     case 4: {
                         ETFindNameOrId.setVisibility(View.VISIBLE);
+                        ETFindNameOrId.setInputType(TYPE_CLASS_TEXT);
                         ETFindNameOrId.setHint("name");
                         spinnerItem = 4;
                         break;
                     }
                     case 5: {
                         ETFindNameOrId.setVisibility(View.VISIBLE);
+                        ETFindNameOrId.setInputType(TYPE_CLASS_NUMBER);
                         ETFindNameOrId.setHint("id");
                         spinnerItem = 5;
                         break;
@@ -210,11 +212,7 @@ public class ProjectActivity extends AppCompatActivity {
         final DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                Calendar cal = Calendar.getInstance();
-                cal.set(year, month, day);
-                SimpleDateFormat format1 = new SimpleDateFormat("dd.MM.yyyy" , Locale.ROOT);
-                String formatted = format1.format(cal.getTime());
-                ETDateBeg.setText(formatted);
+                ETDateBeg.setText(getFormattedDate(year, month, day));
             }
         };
 
@@ -236,11 +234,7 @@ public class ProjectActivity extends AppCompatActivity {
         final DatePickerDialog.OnDateSetListener mDateEndSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                Calendar cal = Calendar.getInstance();
-                cal.set(year, month, day);
-                SimpleDateFormat format1 = new SimpleDateFormat("dd.MM.yyyy" , Locale.ROOT);
-                String formatted = format1.format(cal.getTime());
-                ETDateEnd.setText(formatted);
+                ETDateEnd.setText(getFormattedDate(year, month, day));
             }
         };
 
@@ -262,11 +256,7 @@ public class ProjectActivity extends AppCompatActivity {
         final DatePickerDialog.OnDateSetListener mDateEndRealSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                Calendar cal = Calendar.getInstance();
-                cal.set(year, month, day);
-                SimpleDateFormat format1 = new SimpleDateFormat("dd.MM.yyyy" , Locale.ROOT);
-                String formatted = format1.format(cal.getTime());
-                ETDateEndReal.setText(formatted);
+                ETDateEndReal.setText(getFormattedDate(year, month, day));
             }
         };
 
@@ -342,6 +332,13 @@ public class ProjectActivity extends AppCompatActivity {
         });
     }
 
+    private String getFormattedDate(int year, int month, int day) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(year, month, day);
+        SimpleDateFormat format1 = new SimpleDateFormat("dd.MM.yyyy" , Locale.ROOT);
+        return format1.format(cal.getTime());
+    }
+
     private void updateDepartmentSpinner() {
         departmentAdapter.clear();
         CallBack<String> callBack = new CallBack<String>() {
@@ -351,28 +348,19 @@ public class ProjectActivity extends AppCompatActivity {
                 GsonBuilder builder = new GsonBuilder();
                 builder.registerTypeAdapter(lConverter.getConverterClass(), lConverter);
                 Gson departmentGson = builder.create();
-                Type type = new TypeToken<List<Departments>>(){}.getType();
-                List<Departments> list = new ArrayList<>();
-                try {
-                    list = departmentGson.fromJson(result, type);
-                } catch (JsonIOException | JsonSyntaxException ex) {
-                    Departments dep = departmentGson.fromJson(result, Departments.class);
-                    list.add(dep);
-                }
+                ResultConverter<Departments> converter = new ResultConverter<>(departmentGson);
+                Type listType = new TypeToken<List<Departments>>(){}.getType();
+                Type type = new TypeToken<Departments>(){}.getType();
+                List<Departments> list = converter.getListFromResult(result, listType, type);
                 if (!list.isEmpty()) {
 
                     final List<Departments> finalList = list;
-                                /*for (Departments dep : list) {
-                                    finalList.add(dep.toString());
-                                }*/
                     runOnUiThread(new Runnable() {
                         public void run() {
                             departmentAdapter.addAll(finalList);
                             departmentAdapter.notifyDataSetChanged();
                         }
                     });
-                    //setFieldsWithCurrentProject(0);
-                    //createToast("Nothing found!");
                 }
             }
 
@@ -390,14 +378,10 @@ public class ProjectActivity extends AppCompatActivity {
         CallBack<String> callBack = new CallBack<String>() {
             @Override
             public void onSuccess(String result) {
-                Type type = new TypeToken<List<Projects>>(){}.getType();
-                List<Projects> list = new ArrayList<>();
-                try {
-                    list = projectGson.fromJson(result, type);
-                } catch (JsonIOException | JsonSyntaxException ex) {
-                    Projects empl = projectGson.fromJson(result, Projects.class);
-                    list.add(empl);
-                }
+                ResultConverter<Projects> converter = new ResultConverter<>(projectGson);
+                Type listType = new TypeToken<List<Projects>>(){}.getType();
+                Type type = new TypeToken<Projects>(){}.getType();
+                List<Projects> list = converter.getListFromResult(result, listType, type);
                 if (list.isEmpty()) {
                     createToast("Nothing found!");
                 } else {
@@ -478,8 +462,7 @@ public class ProjectActivity extends AppCompatActivity {
         };
 
         if (id.isEmpty()) {
-            Toast toast = Toast.makeText(getApplicationContext(), "Enter Id",  Toast.LENGTH_LONG);
-            toast.show();
+            createToast("Enter Id");
         } else {
             String url = "projects/deleteById/" + id;
             handler.setUrlResource(url);
@@ -498,14 +481,10 @@ public class ProjectActivity extends AppCompatActivity {
         CallBack<String> callBack = new CallBack<String>() {
             @Override
             public void onSuccess(String result) {
-                Type type = new TypeToken<List<Projects>>(){}.getType();
-                List<Projects> list = new ArrayList<>();
-                try {
-                    list = projectGson.fromJson(result, type);
-                } catch (JsonIOException | JsonSyntaxException ex) {
-                    Projects proj = projectGson.fromJson(result, Projects.class);
-                    list.add(proj);
-                }
+                ResultConverter<Projects> converter = new ResultConverter<>(projectGson);
+                Type listType = new TypeToken<List<Projects>>(){}.getType();
+                Type type = new TypeToken<Projects>(){}.getType();
+                List<Projects> list = converter.getListFromResult(result, listType, type);
 
                 if (!list.contains(array.get(currentRecord))) {
                     CallBack<String> call = new CallBack<String>() {
@@ -528,9 +507,7 @@ public class ProjectActivity extends AppCompatActivity {
 
                     if (name.isEmpty() || cost.isEmpty() || dateBeg.isEmpty() || dateEnd.isEmpty() ||
                             dateEndReal.isEmpty() || currentDepartment == null) {
-                        Toast toast = Toast.makeText(getApplicationContext(),
-                                "Not enough information!",  Toast.LENGTH_LONG);
-                        toast.show();
+                        createToast("Not enough information!");
                     } else {
                         Float newCost = Float.parseFloat(cost);
                         Date beg = null;
@@ -546,11 +523,14 @@ public class ProjectActivity extends AppCompatActivity {
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
+                        if (end.getTime() < beg.getTime() || endReal.getTime() < beg.getTime()) {
+                            createToast("wrong dates!");
+                            return;
+                        }
+
                         Projects object = new Projects(null, name, newCost, currentDepartment, beg, end, endReal);
                         String json = projectGson.toJson(object);
                         System.out.println(json);
-                        //System.out.println(object);
-                        //System.out.println(object.toString());
                         String url = "projects/add";
                         handler.setUrlResource(url);
                         handler.setHttpMethod("POST");
@@ -564,11 +544,11 @@ public class ProjectActivity extends AppCompatActivity {
 
             @Override
             public void onFail(String message, int code) {
-                handlerForBadRequest(code, "departments"); //Adding failed
+                //handlerForBadRequest(code, "departments"); //Adding failed
             }
         };
 
-        handler.setUrlResource("departments/all");
+        handler.setUrlResource("projects/all");
         handler.setHttpMethod("GET");
         handler.execute(callBack, null);
     }
@@ -603,14 +583,11 @@ public class ProjectActivity extends AppCompatActivity {
         };
 
         if (id.isEmpty()) {
-            Toast toast = Toast.makeText(getApplicationContext(), "No id!",  Toast.LENGTH_LONG);
-            toast.show();
+            createToast("No id!");
         } else {
             if (name.isEmpty() || cost.isEmpty() || dateBeg.isEmpty() || dateEnd.isEmpty() ||
                     dateEndReal.isEmpty() || currentDepartment == null) {
-                Toast toast = Toast.makeText(getApplicationContext(),
-                        "Not enough information!",  Toast.LENGTH_LONG);
-                toast.show();
+                createToast("Not enough information!");
             } else {
                 Float newCost = Float.parseFloat(cost);
                 Date beg = null;
@@ -626,6 +603,11 @@ public class ProjectActivity extends AppCompatActivity {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
+                if (end.getTime() < beg.getTime() || endReal.getTime() < beg.getTime()) {
+                    createToast("wrong dates!");
+                    return;
+                }
+
                 Projects object = new Projects(Long.parseLong(id), name, newCost, currentDepartment, beg, end, endReal);
                 String json = projectGson.toJson(object);
                 String url = "projects/update";
@@ -661,7 +643,7 @@ public class ProjectActivity extends AppCompatActivity {
                 break;
             }*/
             default:
-                mess = "Connection failed!";
+                mess = "Connection failed or token is expired!";
         }
         createToast(mess);
     }

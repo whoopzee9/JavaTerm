@@ -1,7 +1,6 @@
 package com.example.clientjavaterm;
 
 import android.os.Bundle;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -17,17 +16,16 @@ import com.example.clientjavaterm.converters.EmployeeConverter;
 import com.example.clientjavaterm.entity.Employees;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.text.InputType.TYPE_CLASS_NUMBER;
+import static android.text.InputType.TYPE_CLASS_TEXT;
 
 public class EmployeeActivity extends AppCompatActivity {
 
@@ -134,6 +132,7 @@ public class EmployeeActivity extends AppCompatActivity {
                     }
                     case 2: {
                         ETFindLastNameOrId.setVisibility(View.VISIBLE);
+                        ETFindLastNameOrId.setInputType(TYPE_CLASS_NUMBER);
                         ETFindFirstName.setVisibility(View.GONE);
                         ETFindPatherName.setVisibility(View.GONE);
                         ETFindLastNameOrId.setHint("id");
@@ -142,6 +141,7 @@ public class EmployeeActivity extends AppCompatActivity {
                     }
                     case 3: {
                         ETFindLastNameOrId.setVisibility(View.VISIBLE);
+                        ETFindLastNameOrId.setInputType(TYPE_CLASS_TEXT);
                         ETFindFirstName.setVisibility(View.VISIBLE);
                         ETFindPatherName.setVisibility(View.VISIBLE);
                         ETFindLastNameOrId.setHint("last name");
@@ -217,14 +217,10 @@ public class EmployeeActivity extends AppCompatActivity {
         final CallBack<String> callBack = new CallBack<String>() {
             @Override
             public void onSuccess(String result) {
-                Type type = new TypeToken<List<Employees>>(){}.getType();
-                List<Employees> list = new ArrayList<>();
-                try {
-                    list = employeeGson.fromJson(result, type);
-                } catch (JsonIOException | JsonSyntaxException ex) {
-                    Employees empl = employeeGson.fromJson(result, Employees.class);
-                    list.add(empl);
-                }
+                ResultConverter<Employees> converter = new ResultConverter<>(employeeGson);
+                Type listType = new TypeToken<List<Employees>>(){}.getType();
+                Type type = new TypeToken<Employees>(){}.getType();
+                List<Employees> list = converter.getListFromResult(result, listType, type);
                 if (list.isEmpty()) {
                     createToast("Nothing found!");
                 } else {
@@ -299,8 +295,7 @@ public class EmployeeActivity extends AppCompatActivity {
         };
 
         if (id.isEmpty()) {
-            Toast toast = Toast.makeText(getApplicationContext(), "Enter Id",  Toast.LENGTH_LONG);
-            toast.show();
+            createToast("Enter Id");
         } else {
             String url = "employees/deleteById/" + id;
             handler.setUrlResource(url);
@@ -319,14 +314,10 @@ public class EmployeeActivity extends AppCompatActivity {
         CallBack<String> callBack = new CallBack<String>() {
             @Override
             public void onSuccess(String result) {
-                Type type = new TypeToken<List<Employees>>(){}.getType();
-                List<Employees> list = new ArrayList<>();
-                try {
-                    list = employeeGson.fromJson(result, type);
-                } catch (JsonIOException | JsonSyntaxException ex) {
-                    Employees empl = employeeGson.fromJson(result, Employees.class);
-                    list.add(empl);
-                }
+                ResultConverter<Employees> converter = new ResultConverter<>(employeeGson);
+                Type listType = new TypeToken<List<Employees>>(){}.getType();
+                Type type = new TypeToken<Employees>(){}.getType();
+                List<Employees> list = converter.getListFromResult(result, listType, type);
 
                 if (!list.contains(array.get(currentRecord))) {
                     CallBack<String> call = new CallBack<String>() {
@@ -348,9 +339,7 @@ public class EmployeeActivity extends AppCompatActivity {
                     };
 
                     if (last.isEmpty() || first.isEmpty() || pather.isEmpty() || position.isEmpty() || salary.isEmpty()) {
-                        Toast toast = Toast.makeText(getApplicationContext(),
-                                "Not enough information!",  Toast.LENGTH_LONG);
-                        toast.show();
+                        createToast("Not enough information!");
                     } else {
                         Employees empl = new Employees(null, first, last, pather, position, Float.parseFloat(salary));
                         String json = employeeGson.toJson(empl);
@@ -367,7 +356,7 @@ public class EmployeeActivity extends AppCompatActivity {
 
             @Override
             public void onFail(String message, int code) {
-                handlerForBadRequest(code); //Adding failed
+                //handlerForBadRequest(code); //Adding failed
             }
         };
 
@@ -405,13 +394,10 @@ public class EmployeeActivity extends AppCompatActivity {
         };
 
         if (id.isEmpty()) {
-            Toast toast = Toast.makeText(getApplicationContext(), "No id!",  Toast.LENGTH_LONG);
-            toast.show();
+            createToast("No id!");
         } else {
             if (last.isEmpty() || first.isEmpty() || pather.isEmpty() || position.isEmpty() || salary.isEmpty()) {
-                Toast toast = Toast.makeText(getApplicationContext(),
-                        "Not enough information!",  Toast.LENGTH_LONG);
-                toast.show();
+                createToast("Not enough information!");
             } else {
                 Employees object = new Employees(Long.parseLong(id), first, last, pather, position, Float.parseFloat(salary));
                 String json = employeeGson.toJson(object);
@@ -448,7 +434,7 @@ public class EmployeeActivity extends AppCompatActivity {
                 break;
             }
             default:
-                mess = "Connection failed!";
+                mess = "Connection failed or token is expired!";
         }
         createToast(mess);
     }
@@ -465,6 +451,7 @@ public class EmployeeActivity extends AppCompatActivity {
     private void setFieldsWithCurrentEmployee(final int num) {
         runOnUiThread(new Runnable() {
             public void run() {
+                System.out.println(array.get(num).getClass());
                 Employees object = array.get(num);
                 ETId.setText(object.getId().toString());
                 ETLastName.setText(object.getLastName());
