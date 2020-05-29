@@ -283,6 +283,11 @@ public class DepartmentActivity extends AppCompatActivity {
     private void BAddClickListener() {
         final String name = ETName.getText().toString();
 
+        if (!ETId.getText().toString().isEmpty()) {
+            createToast("Can't add. Please try to click 'New' for new one, or 'Update'");
+            return;
+        }
+
         CallBack<String> callBack = new CallBack<String>() {
             @Override
             public void onSuccess(String result) {

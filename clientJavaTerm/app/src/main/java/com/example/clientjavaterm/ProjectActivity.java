@@ -139,6 +139,7 @@ public class ProjectActivity extends AppCompatActivity {
         spinnerDepartment.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                departmentAdapter.setFlag(true);
                 currentDepartment = (Departments) parent.getItemAtPosition(position);
             }
 
@@ -335,7 +336,7 @@ public class ProjectActivity extends AppCompatActivity {
     private String getFormattedDate(int year, int month, int day) {
         Calendar cal = Calendar.getInstance();
         cal.set(year, month, day);
-        SimpleDateFormat format1 = new SimpleDateFormat("dd.MM.yyyy" , Locale.ROOT);
+        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd" , Locale.ROOT); //dd.MM.yyyy
         return format1.format(cal.getTime());
     }
 
@@ -479,6 +480,11 @@ public class ProjectActivity extends AppCompatActivity {
         final String dateEnd = ETDateEnd.getText().toString();
         final String dateEndReal = ETDateEndReal.getText().toString();
 
+        if (!ETId.getText().toString().isEmpty()) {
+            createToast("Can't add. Please try to click 'New' for new one, or 'Update'");
+            return;
+        }
+
         CallBack<String> callBack = new CallBack<String>() {
             @Override
             public void onSuccess(String result) {
@@ -497,11 +503,11 @@ public class ProjectActivity extends AppCompatActivity {
                 Date end = null;
                 Date endReal = null;
                 try {
-                    java.util.Date utilDate = new SimpleDateFormat( "dd.MM.yyyy" ).parse(dateBeg);
+                    java.util.Date utilDate = new SimpleDateFormat( "yyyy-MM-dd" ).parse(dateBeg);
                     beg = new Date(utilDate.getTime());
-                    utilDate = new SimpleDateFormat( "dd.MM.yyyy" ).parse(dateEnd);
+                    utilDate = new SimpleDateFormat( "yyyy-MM-dd" ).parse(dateEnd);
                     end = new Date(utilDate.getTime());
-                    utilDate = new SimpleDateFormat( "dd.MM.yyyy" ).parse(dateEndReal);
+                    utilDate = new SimpleDateFormat( "yyyy-MM-dd" ).parse(dateEndReal);
                     endReal = new Date(utilDate.getTime());
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -600,11 +606,11 @@ public class ProjectActivity extends AppCompatActivity {
                 Date end = null;
                 Date endReal = null;
                 try {
-                    java.util.Date utilDate = new SimpleDateFormat( "dd.MM.yyyy" ).parse(dateBeg);
+                    java.util.Date utilDate = new SimpleDateFormat("yyyy-MM-dd").parse(dateBeg);
                     beg = new Date(utilDate.getTime());
-                    utilDate = new SimpleDateFormat( "dd.MM.yyyy" ).parse(dateEnd);
+                    utilDate = new SimpleDateFormat("yyyy-MM-dd").parse(dateEnd);
                     end = new Date(utilDate.getTime());
-                    utilDate = new SimpleDateFormat( "dd.MM.yyyy" ).parse(dateEndReal);
+                    utilDate = new SimpleDateFormat("yyyy-MM-dd").parse(dateEndReal);
                     endReal = new Date(utilDate.getTime());
                 } catch (ParseException e) {
                     e.printStackTrace();

@@ -312,6 +312,11 @@ public class EmployeeActivity extends AppCompatActivity {
         final String position = ETPosition.getText().toString();
         final String salary = ETSalary.getText().toString();
 
+        if (!ETId.getText().toString().isEmpty()) {
+            createToast("Can't add. Please try to click 'New' for new one, or 'Update'");
+            return;
+        }
+
         CallBack<String> callBack = new CallBack<String>() {
             @Override
             public void onSuccess(String result) {
