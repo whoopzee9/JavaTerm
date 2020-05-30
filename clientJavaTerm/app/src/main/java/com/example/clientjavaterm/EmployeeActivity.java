@@ -196,8 +196,8 @@ public class EmployeeActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (currentRecord > 0) {
                     currentRecord--;
-                    setFieldsWithCurrentEmployee(currentRecord);
                 }
+                setFieldsWithCurrentEmployee(currentRecord);
                 clearFocuses();
             }
         });
@@ -207,8 +207,8 @@ public class EmployeeActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (currentRecord < arrayLength - 1) {
                     currentRecord++;
-                    setFieldsWithCurrentEmployee(currentRecord);
                 }
+                setFieldsWithCurrentEmployee(currentRecord);
                 clearFocuses();
             }
         });

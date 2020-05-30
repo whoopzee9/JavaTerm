@@ -45,7 +45,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:fontFamily="sans-serif-medium"
-        android:text="Departments"
+        android:text="Departments and Employees"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -56,8 +56,9 @@
         android:id="@+id/scrollView2"
         android:layout_width="match_parent"
         android:layout_height="161dp"
-
-        android:layout_margin="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
         android:fadeScrollbars="false"
         android:fillViewport="false"
         android:isScrollContainer="true"
@@ -82,7 +83,7 @@
                     android:id="@+id/textView4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="30dp"
+                    android:layout_marginStart="10dp"
                     android:text="Id" />
 
                 <EditText
@@ -107,7 +108,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginStart="30dp"
+                    android:layout_marginStart="10dp"
                     android:text="Department" />
 
                 <Spinner
@@ -132,7 +133,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginStart="30dp"
+                    android:layout_marginStart="10dp"
                     android:text="Employee" />
 
                 <Spinner
@@ -154,8 +155,8 @@
         android:id="@+id/SpDESpinner"
         android:layout_width="136dp"
         android:layout_height="43dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="36dp"
+        android:layout_marginEnd="26dp"
+        android:layout_marginBottom="20dp"
         android:entries="@array/DEFind"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -172,29 +173,29 @@
 
     <Button
         android:id="@+id/BDEAdd"
-        android:layout_width="wrap_content"
+        android:layout_width="77dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="26dp"
-        android:layout_marginBottom="36dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginBottom="30dp"
         android:text="Add"
         app:layout_constraintBottom_toTopOf="@+id/SpDESpinner"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/BDEUpdate" />
 
     <Button
         android:id="@+id/BDEUpdate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="26dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="30dp"
         android:text="Update"
-        app:layout_constraintBottom_toTopOf="@+id/BDEAdd"
+        app:layout_constraintBottom_toTopOf="@+id/SpDESpinner"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/BDEDelete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="36dp"
+        android:layout_marginBottom="30dp"
         android:text="Delete"
         app:layout_constraintBottom_toTopOf="@+id/SpDESpinner"
         app:layout_constraintEnd_toStartOf="@+id/BDEFind"
@@ -202,8 +203,9 @@
         app:layout_constraintStart_toEndOf="@+id/BDEAdd" />
 
     <ScrollView
-        android:layout_width="208dp"
-        android:layout_height="74dp"
+        android:layout_width="211dp"
+        android:layout_height="61dp"
+        android:layout_marginStart="26dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="16dp"
         android:fadeScrollbars="false"
@@ -214,7 +216,8 @@
         android:scrollbarThumbVertical="@android:color/holo_red_dark"
         android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/SpDESpinner">
+        app:layout_constraintEnd_toStartOf="@+id/SpDESpinner"
+        app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -226,17 +229,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:singleLine="true"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:singleLine="true" />
 
             <EditText
                 android:id="@+id/ETDEFindFirstName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:singleLine="true"
-                android:inputType="textPersonName"
                 android:hint="first name"
+                android:inputType="textPersonName"
+                android:singleLine="true"
                 android:visibility="gone"
                 tools:visibility="gone" />
 
@@ -245,9 +248,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:singleLine="true"
-                android:inputType="textPersonName"
                 android:hint="pather name"
+                android:inputType="textPersonName"
+                android:singleLine="true"
                 android:visibility="gone"
                 tools:visibility="gone" />
         </LinearLayout>
@@ -258,7 +261,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="26dp"
-        android:layout_marginBottom="36dp"
+        android:layout_marginBottom="30dp"
         android:text="Find"
         app:layout_constraintBottom_toTopOf="@+id/SpDESpinner"
         app:layout_constraintEnd_toEndOf="parent" />

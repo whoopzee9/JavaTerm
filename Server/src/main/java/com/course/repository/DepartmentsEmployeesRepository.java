@@ -7,7 +7,6 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Collection;
 
-
 public interface DepartmentsEmployeesRepository extends CrudRepository<DepartmentsEmployees, Long> {
     @Query("select de from DepartmentsEmployees de inner join Departments d on " +
             "d.id = de.departments.id where d.name = :name") //TODO проверить без inner join

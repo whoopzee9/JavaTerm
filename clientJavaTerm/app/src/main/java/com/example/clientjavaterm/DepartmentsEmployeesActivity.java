@@ -187,7 +187,6 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
         spinnerDepartment.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                departmentAdapter.setFlag(true);
                 currentDepartment = (Departments) parent.getItemAtPosition(position);
             }
 
@@ -212,7 +211,6 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
         spinnerEmployee.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                employeeAdapter.setFlag(true);
                 currentEmployee = (Employees) parent.getItemAtPosition(position);
             }
 
@@ -268,8 +266,8 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (currentRecord > 0) {
                     currentRecord--;
-                    setFieldsWithCurrentDE(currentRecord);
                 }
+                setFieldsWithCurrentDE(currentRecord);
                 clearFocuses();
             }
         });
@@ -279,8 +277,8 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (currentRecord < arrayLength - 1) {
                     currentRecord++;
-                    setFieldsWithCurrentDE(currentRecord);
                 }
+                setFieldsWithCurrentDE(currentRecord);
                 clearFocuses();
             }
         });
@@ -328,14 +326,11 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
                 handlerForBadRequest(code, "departments");
             }
         };
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                handler.setHttpMethod("GET");
-                handler.setUrlResource("departments/all");
-                handler.execute(callBack, null);
-            }
-        });
+        RequestHandler handl = new RequestHandler(urlString);
+        handl.setToken(token);
+        handl.setHttpMethod("GET");
+        handl.setUrlResource("departments/all");
+        handl.execute(callBack, null);
     }
 
     private void updateEmployeeSpinner() {
@@ -371,14 +366,9 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
                 handlerForBadRequest(code, "employees");
             }
         };
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                handler.setHttpMethod("GET");
-                handler.setUrlResource("employees/all");
-                handler.execute(callBack, null);
-            }
-        });
+        handler.setHttpMethod("GET");
+        handler.setUrlResource("employees/all");
+        handler.execute(callBack, null);
     }
 
     private void BFindClickListener() {
@@ -631,8 +621,6 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
     private void setFieldsWithCurrentDE(final int num) {
         runOnUiThread(new Runnable() {
             public void run() {
-                departmentAdapter.setFlag(true);
-                employeeAdapter.setFlag(true);
                 DepartmentsEmployees object = array.get(num);
                 ETId.setText(object.getId().toString());
 

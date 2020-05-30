@@ -23,6 +23,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static android.text.InputType.TYPE_CLASS_NUMBER;
@@ -174,8 +175,8 @@ public class DepartmentActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (currentRecord > 0) {
                     currentRecord--;
-                    setFieldsWithCurrentDepartment(currentRecord);
                 }
+                setFieldsWithCurrentDepartment(currentRecord);
                 clearFocuses();
             }
         });
@@ -185,8 +186,8 @@ public class DepartmentActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (currentRecord < arrayLength - 1) {
                     currentRecord++;
-                    setFieldsWithCurrentDepartment(currentRecord);
                 }
+                setFieldsWithCurrentDepartment(currentRecord);
                 clearFocuses();
             }
         });

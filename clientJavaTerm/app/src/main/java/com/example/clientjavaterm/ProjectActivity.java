@@ -141,7 +141,6 @@ public class ProjectActivity extends AppCompatActivity {
         spinnerDepartment.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                departmentAdapter.setFlag(true);
                 currentDepartment = (Departments) parent.getItemAtPosition(position);
             }
 
@@ -316,8 +315,8 @@ public class ProjectActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (currentRecord > 0) {
                     currentRecord--;
-                    setFieldsWithCurrentProject(currentRecord);
                 }
+                setFieldsWithCurrentProject(currentRecord);
                 clearFocuses();
             }
         });
@@ -327,8 +326,8 @@ public class ProjectActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (currentRecord < arrayLength - 1) {
                     currentRecord++;
-                    setFieldsWithCurrentProject(currentRecord);
                 }
+                setFieldsWithCurrentProject(currentRecord);
                 clearFocuses();
             }
         });
@@ -693,7 +692,6 @@ public class ProjectActivity extends AppCompatActivity {
     private void setFieldsWithCurrentProject(final int num) {
         runOnUiThread(new Runnable() {
             public void run() {
-                departmentAdapter.setFlag(true);
                 Projects object = array.get(num);
                 ETId.setText(object.getId().toString());
                 ETName.setText(object.getName());

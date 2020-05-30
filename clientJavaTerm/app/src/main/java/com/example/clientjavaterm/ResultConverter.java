@@ -17,6 +17,7 @@ public class ResultConverter<T> {
 
     public List<T> getListFromResult(String result, Type listType, Type type) {
         List<T> list = new ArrayList<>();
+        System.out.println(result);
         try {
             list = gson.fromJson(result, listType);
         } catch (JsonIOException | JsonSyntaxException ex) {

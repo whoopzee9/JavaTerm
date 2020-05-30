@@ -241,8 +241,8 @@
         android:id="@+id/SpProjectSpinner"
         android:layout_width="136dp"
         android:layout_height="43dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="36dp"
+        android:layout_marginEnd="26dp"
+        android:layout_marginBottom="20dp"
         android:entries="@array/ProjectFind"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -259,42 +259,42 @@
 
     <Button
         android:id="@+id/BProjectAdd"
-        android:layout_width="wrap_content"
+        android:layout_width="77dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="26dp"
-        android:layout_marginBottom="36dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginBottom="30dp"
         android:text="Add"
         app:layout_constraintBottom_toTopOf="@+id/SpProjectSpinner"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/BProjectUpdate" />
 
     <Button
         android:id="@+id/BProjectUpdate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="26dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="30dp"
         android:text="Update"
-        app:layout_constraintBottom_toTopOf="@+id/BProjectAdd"
+        app:layout_constraintBottom_toTopOf="@+id/SpProjectSpinner"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/BProjectDelete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="36dp"
+        android:layout_marginBottom="30dp"
         android:text="Delete"
         app:layout_constraintBottom_toTopOf="@+id/SpProjectSpinner"
         app:layout_constraintEnd_toStartOf="@+id/BProjectFind"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.47"
         app:layout_constraintStart_toEndOf="@+id/BProjectAdd" />
 
     <EditText
         android:id="@+id/ETProjectFindLastNameOrId"
         android:layout_width="208dp"
         android:layout_height="43dp"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="26dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginBottom="36dp"
+        android:layout_marginBottom="20dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:singleLine="true"
@@ -308,7 +308,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="26dp"
-        android:layout_marginBottom="36dp"
+        android:layout_marginBottom="30dp"
         android:text="Find"
         app:layout_constraintBottom_toTopOf="@+id/SpProjectSpinner"
         app:layout_constraintEnd_toEndOf="parent" />

@@ -2,14 +2,11 @@ package com.course;
 
 import com.course.entity.Employees;
 import com.course.repository.EmployeesRepository;
-import com.course.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import com.course.repository.jpa.UserRepository;
-
-import java.util.Collections;
 
 @Component
 public class TestDataUnit implements CommandLineRunner {
@@ -23,16 +20,8 @@ public class TestDataUnit implements CommandLineRunner {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    /*@Autowired
-    public TestDataUnit(EmployeesRepository employeesRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.employeesRepository = employeesRepository;
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }*/
-
     @Override
     public void run(String... args) throws Exception {
-        System.out.println("here2");
         employeesRepository.save(new Employees("Alex", "Bublyaev", "Vyacheslavovich",
                 "CEO", (float) 10000));
         employeesRepository.save(new Employees("Alex1", "Bublyaev1", "Vyacheslavovich1",
