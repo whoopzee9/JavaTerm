@@ -315,10 +315,12 @@ public class ProjectActivity extends AppCompatActivity {
         BPrev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (currentRecord > 0) {
-                    currentRecord--;
+                if (!array.isEmpty()) {
+                    if (currentRecord > 0) {
+                        currentRecord--;
+                    }
+                    setFieldsWithCurrentProject(currentRecord);
                 }
-                setFieldsWithCurrentProject(currentRecord);
                 clearFocuses();
             }
         });
@@ -326,10 +328,12 @@ public class ProjectActivity extends AppCompatActivity {
         BNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (currentRecord < arrayLength - 1) {
-                    currentRecord++;
+                if (!array.isEmpty()) {
+                    if (currentRecord < arrayLength - 1) {
+                        currentRecord++;
+                    }
+                    setFieldsWithCurrentProject(currentRecord);
                 }
-                setFieldsWithCurrentProject(currentRecord);
                 clearFocuses();
             }
         });
@@ -346,7 +350,7 @@ public class ProjectActivity extends AppCompatActivity {
     private String getFormattedDate(int year, int month, int day) {
         Calendar cal = Calendar.getInstance();
         cal.set(year, month, day);
-        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd" , Locale.ROOT); //dd.MM.yyyy
+        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd" , Locale.ROOT);
         return format1.format(cal.getTime());
     }
 
@@ -419,18 +423,34 @@ public class ProjectActivity extends AppCompatActivity {
             }
             case 2: {
                 url = "projects/getById/" + text;
+                if (text.isEmpty()) {
+                    createToast("not enough information!");
+                    return;
+                }
                 break;
             }
             case 3: {
                 url = "projects/getByName/" + text;
+                if (text.isEmpty()) {
+                    createToast("not enough information!");
+                    return;
+                }
                 break;
             }
             case 4: {
                 url = "projects/getByDepartmentName/" + text;
+                if (text.isEmpty()) {
+                    createToast("not enough information!");
+                    return;
+                }
                 break;
             }
             case 5: {
                 url = "projects/getByDepartmentId/" + text;
+                if (text.isEmpty()) {
+                    createToast("not enough information!");
+                    return;
+                }
                 break;
             }
         }
@@ -474,7 +494,7 @@ public class ProjectActivity extends AppCompatActivity {
         };
 
         if (id.isEmpty()) {
-            createToast("Enter Id");
+            createToast("No Id");
         } else {
             String url = "projects/deleteById/" + id;
             handler.setUrlResource(url);

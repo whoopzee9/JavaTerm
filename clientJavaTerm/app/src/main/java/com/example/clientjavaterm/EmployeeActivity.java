@@ -196,10 +196,12 @@ public class EmployeeActivity extends AppCompatActivity {
         BPrev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (currentRecord > 0) {
-                    currentRecord--;
+                if (!array.isEmpty()) {
+                    if (currentRecord > 0) {
+                        currentRecord--;
+                    }
+                    setFieldsWithCurrentEmployee(currentRecord);
                 }
-                setFieldsWithCurrentEmployee(currentRecord);
                 clearFocuses();
             }
         });
@@ -207,10 +209,12 @@ public class EmployeeActivity extends AppCompatActivity {
         BNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (currentRecord < arrayLength - 1) {
-                    currentRecord++;
+                if (!array.isEmpty()) {
+                    if (currentRecord < arrayLength - 1) {
+                        currentRecord++;
+                    }
+                    setFieldsWithCurrentEmployee(currentRecord);
                 }
-                setFieldsWithCurrentEmployee(currentRecord);
                 clearFocuses();
             }
         });
@@ -249,6 +253,7 @@ public class EmployeeActivity extends AppCompatActivity {
         };
 
         String url = "";
+
         switch (spinnerItem) {
             case 1: {
                 url = "employees/all";
@@ -256,6 +261,10 @@ public class EmployeeActivity extends AppCompatActivity {
             }
             case 2: {
                 String id = ETFindLastNameOrId.getText().toString();
+                if (id.isEmpty()) {
+                    createToast("not enough information!");
+                    return;
+                }
                 url = "employees/getById/" + id;
                 break;
             }
@@ -263,11 +272,16 @@ public class EmployeeActivity extends AppCompatActivity {
                 String last = ETFindLastNameOrId.getText().toString();
                 String first = ETFindFirstName.getText().toString();
                 String pather = ETFindPatherName.getText().toString();
+                if (last.isEmpty() || first.isEmpty() || pather.isEmpty()) {
+                    createToast("not enough information!");
+                    return;
+                }
                 url = "employees/getByName/" + last + "/" + first + "/" + pather;
                 break;
             }
         }
         if (spinnerItem != 0) {
+            System.out.println(url);
             handler.setUrlResource(url);
             handler.setHttpMethod("GET");
             handler.execute(callBack, null);

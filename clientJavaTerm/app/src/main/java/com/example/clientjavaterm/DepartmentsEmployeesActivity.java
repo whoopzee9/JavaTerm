@@ -158,19 +158,19 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
                     }
                     case 4: {
                         ETFindLastNameOrId.setVisibility(View.VISIBLE);
-                        ETFindLastNameOrId.setInputType(TYPE_CLASS_NUMBER);
+                        ETFindLastNameOrId.setInputType(TYPE_CLASS_TEXT);
                         ETFindFirstName.setVisibility(View.GONE);
                         ETFindPatherName.setVisibility(View.GONE);
-                        ETFindLastNameOrId.setHint("id");
+                        ETFindLastNameOrId.setHint("name");
                         spinnerItem = 4;
                         break;
                     }
                     case 5: {
                         ETFindLastNameOrId.setVisibility(View.VISIBLE);
-                        ETFindLastNameOrId.setInputType(TYPE_CLASS_TEXT);
+                        ETFindLastNameOrId.setInputType(TYPE_CLASS_NUMBER);
                         ETFindFirstName.setVisibility(View.GONE);
                         ETFindPatherName.setVisibility(View.GONE);
-                        ETFindLastNameOrId.setHint("name");
+                        ETFindLastNameOrId.setHint("id");
                         spinnerItem = 5;
                         break;
                     }
@@ -266,10 +266,12 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
         BPrev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (currentRecord > 0) {
-                    currentRecord--;
+                if (!array.isEmpty()) {
+                    if (currentRecord > 0) {
+                        currentRecord--;
+                    }
+                    setFieldsWithCurrentDE(currentRecord);
                 }
-                setFieldsWithCurrentDE(currentRecord);
                 clearFocuses();
             }
         });
@@ -277,10 +279,12 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
         BNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (currentRecord < arrayLength - 1) {
-                    currentRecord++;
+                if (!array.isEmpty()) {
+                    if (currentRecord < arrayLength - 1) {
+                        currentRecord++;
+                    }
+                    setFieldsWithCurrentDE(currentRecord);
                 }
-                setFieldsWithCurrentDE(currentRecord);
                 clearFocuses();
             }
         });
@@ -408,18 +412,34 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
             }
             case 2: {
                 url = "departmentsEmployees/getByEmployeeId/" + text;
+                if (text.isEmpty())  {
+                    createToast("not enough information!");
+                    return;
+                }
                 break;
             }
             case 3: {
                 url = "departmentsEmployees/getByEmployeeName/" + text + "/" + first + "/" + pather;
+                if (text.isEmpty() || first.isEmpty() || pather.isEmpty()) {
+                    createToast("not enough information!");
+                    return;
+                }
                 break;
             }
             case 4: {
-                url = "departmentsEmployees/getByDepartmentId/" + text;
+                url = "departmentsEmployees/getByDepartmentName/" + text;
+                if (text.isEmpty()) {
+                    createToast("not enough information!");
+                    return;
+                }
                 break;
             }
             case 5: {
-                url = "departmentsEmployees/getByDepartmentName/" + text + "/" + first + "/" + pather;
+                url = "departmentsEmployees/getByDepartmentId/" + text;
+                if (text.isEmpty()) {
+                    createToast("not enough information!");
+                    return;
+                }
                 break;
             }
         }
@@ -463,7 +483,7 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
         };
 
         if (id.isEmpty()) {
-            createToast("Enter Id");
+            createToast("No Id");
         } else {
             String url = "departmentsEmployees/deleteById/" + id;
             handler.setUrlResource(url);
@@ -533,7 +553,6 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
                 handlerForBadRequest(code, "records"); //Adding failed
             }
         };
-
         handler.setUrlResource("departmentsEmployees/all");
         handler.setHttpMethod("GET");
         handler.execute(callBack, null);

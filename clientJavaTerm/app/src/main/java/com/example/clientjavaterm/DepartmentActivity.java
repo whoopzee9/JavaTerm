@@ -175,10 +175,12 @@ public class DepartmentActivity extends AppCompatActivity {
         BPrev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (currentRecord > 0) {
-                    currentRecord--;
+                if (!array.isEmpty()) {
+                    if (currentRecord > 0) {
+                        currentRecord--;
+                    }
+                    setFieldsWithCurrentDepartment(currentRecord);
                 }
-                setFieldsWithCurrentDepartment(currentRecord);
                 clearFocuses();
             }
         });
@@ -186,10 +188,12 @@ public class DepartmentActivity extends AppCompatActivity {
         BNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (currentRecord < arrayLength - 1) {
-                    currentRecord++;
+                if (!array.isEmpty()) {
+                    if (currentRecord < arrayLength - 1) {
+                        currentRecord++;
+                    }
+                    setFieldsWithCurrentDepartment(currentRecord);
                 }
-                setFieldsWithCurrentDepartment(currentRecord);
                 clearFocuses();
             }
         });
@@ -236,10 +240,18 @@ public class DepartmentActivity extends AppCompatActivity {
             }
             case 2: {
                 url = "departments/getById/" + text;
+                if (text.isEmpty()) {
+                    createToast("not enough information!");
+                    return;
+                }
                 break;
             }
             case 3: {
                 url = "departments/getByName/" + text;
+                if (text.isEmpty()) {
+                    createToast("not enough information!");
+                    return;
+                }
                 break;
             }
         }
@@ -283,7 +295,7 @@ public class DepartmentActivity extends AppCompatActivity {
         };
 
         if (id.isEmpty()) {
-            createToast("Enter id!");
+            createToast("No id!");
         } else {
             String url = "departments/deleteById/" + id;
             handler.setUrlResource(url);
