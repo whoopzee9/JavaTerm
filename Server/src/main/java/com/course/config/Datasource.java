@@ -2,20 +2,15 @@ package com.course.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-@EnableTransactionManagement
-//@EnableJpaRepositories("com.course.repository")
 public class Datasource {
 
     @Bean
@@ -42,15 +37,6 @@ public class Datasource {
         factory.setDataSource(dataSource());
         factory.afterPropertiesSet();
         return factory.getObject();
-    }
-
-
-    @Bean
-    public JpaTransactionManager transactionManager() {
-        JpaTransactionManager txManager = new JpaTransactionManager();
-        txManager.setDataSource(dataSource());
-        txManager.setEntityManagerFactory(entityManagerFactory());
-        return txManager;
     }
 
     Properties getHibernateProperties() {

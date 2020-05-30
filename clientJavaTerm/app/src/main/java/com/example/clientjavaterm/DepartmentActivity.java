@@ -66,6 +66,8 @@ public class DepartmentActivity extends AppCompatActivity {
             rolesList = arguments.getStringArrayList("roles");
         }
 
+        array = new ArrayList<>();
+
         converter = new DepartmentConverter();
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(converter.getConverterClass(), converter);
@@ -321,6 +323,7 @@ public class DepartmentActivity extends AppCompatActivity {
                                 public void run() {
                                     ETId.setText(dep.getId().toString());
                                     arrayLength++;
+                                    //System.out.println(dep);
                                     currentRecord = arrayLength - 1;
                                     array.add(dep);
                                     setFieldsWithCurrentDepartment(currentRecord);

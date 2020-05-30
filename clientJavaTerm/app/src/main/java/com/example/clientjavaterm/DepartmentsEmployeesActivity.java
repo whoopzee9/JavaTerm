@@ -78,6 +78,8 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
             rolesList = arguments.getStringArrayList("roles");
         }
 
+        array = new ArrayList<>();
+
         converter = new DepartmentsEmployeesConverter();
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(converter.getConverterClass(), converter);

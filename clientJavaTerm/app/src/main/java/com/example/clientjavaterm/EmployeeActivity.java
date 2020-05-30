@@ -71,6 +71,8 @@ public class EmployeeActivity extends AppCompatActivity {
             rolesList = arguments.getStringArrayList("roles");
         }
 
+        array = new ArrayList<>();
+
         converter = new EmployeeConverter();
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(converter.getConverterClass(), converter);

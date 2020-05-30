@@ -83,6 +83,8 @@ public class ProjectActivity extends AppCompatActivity {
             rolesList = arguments.getStringArrayList("roles");
         }
 
+        array = new ArrayList<>();
+
         converter = new ProjectConverter();
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(converter.getConverterClass(), converter);
