@@ -1,16 +1,16 @@
 package com.course.service;
 
-import com.course.entity.DepartmentsEmployees;
+import com.course.entity.DepartmentEmployee;
 
 import java.util.List;
 
 public interface DepartmentsEmployeesService {
-    List<DepartmentsEmployees> departmentsEmployeesList();
-    List<DepartmentsEmployees> findByDepartmentId(Long id);
-    List<DepartmentsEmployees> findByDepartmentName(String name);
-    List<DepartmentsEmployees> findByEmployeeId(Long id);
-    List<DepartmentsEmployees> findByEmployeeName(String first, String last, String pather);
+    List<DepartmentEmployee> departmentsEmployeesList();
+    List<DepartmentEmployee> findByDepartmentId(Long id);
+    List<DepartmentEmployee> findByDepartmentName(String name);
+    List<DepartmentEmployee> findByEmployeeId(Long id);
+    List<DepartmentEmployee> findByEmployeeName(String first, String last, String pather);
     void deleteDepartmentEmployee(Long id);
-    DepartmentsEmployees addDepartmentsEmployees(DepartmentsEmployees departmentsEmployees);
-    DepartmentsEmployees updateDepartmentsEmployees(DepartmentsEmployees departmentsEmployees);
+    DepartmentEmployee addDepartmentsEmployees(DepartmentEmployee departmentEmployee);
+    DepartmentEmployee updateDepartmentsEmployees(DepartmentEmployee departmentEmployee);
 }

@@ -1,18 +1,37 @@
-package com.example.clientjavaterm.entity;
+package com.course.entity;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import javax.persistence.*;
 
-public class Employees {
+@Entity
+@Table(name = "employees")
+public class Employee {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column
     private Long id;
+
+    @Column(length = 20, name = "first_name", nullable = false)
     private String firstName;
+
+    @Column(length = 20, name = "last_name", nullable = false)
     private String lastName;
+
+    @Column(length = 20, name = "pather_name", nullable = false)
     private String patherName;
+
+    @Column(length = 50, nullable = false)
     private String position;
+
+    @Column
     private Float salary;
 
-    public Employees(Long id, String firstName, String lastName, String patherName, String position, Float salary) {
-        this.id = id;
+    public Employee() {
+    }
+
+    public Employee(String firstName, String lastName, String patherName, String position, Float salary) {
+        if (salary < 0) {
+            throw new IllegalArgumentException("Salary can't be lower that 0!");
+        }
         this.firstName = firstName;
         this.lastName = lastName;
         this.patherName = patherName;
@@ -68,27 +87,9 @@ public class Employees {
         this.salary = salary;
     }
 
-    @NonNull
     @Override
     public String toString() {
-        return "[ " + id + ", " + lastName + ", " + firstName + ", " + patherName + " ]";
-    }
-
-    @Override
-    public boolean equals(@Nullable Object obj) {
-        if (this == obj) {
-            return true;
-        }
-
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-
-        Employees emp = (Employees) obj;
-        return lastName.equals(emp.lastName) &&
-                firstName.equals(emp.firstName) &&
-                patherName.equals(emp.patherName) &&
-                position.equals(emp.position) &&
-                salary.equals(emp.salary);
+        return "Employee { " + id + " ; " + firstName + " ; " + lastName + " ; " + patherName + " ; " +
+                position + " ; " + salary + " }";
     }
 }

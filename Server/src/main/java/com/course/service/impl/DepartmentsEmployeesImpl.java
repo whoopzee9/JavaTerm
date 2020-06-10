@@ -1,8 +1,7 @@
 package com.course.service.impl;
 
 import com.course.exception.DepartmentsEmployeesNotFoundException;
-import com.course.entity.DepartmentsEmployees;
-import com.course.exception.EmployeeNotFoundException;
+import com.course.entity.DepartmentEmployee;
 import com.course.service.DepartmentsEmployeesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -19,14 +18,14 @@ public class DepartmentsEmployeesImpl implements DepartmentsEmployeesService {
     private DepartmentsEmployeesRepository departmentsEmployeesRepository;
 
     @Override
-    public List<DepartmentsEmployees> departmentsEmployeesList() {
-        return (List<DepartmentsEmployees>) departmentsEmployeesRepository.findAll();
+    public List<DepartmentEmployee> departmentsEmployeesList() {
+        return (List<DepartmentEmployee>) departmentsEmployeesRepository.findAll();
     }
 
     @Override
-    public List<DepartmentsEmployees> findByDepartmentId(Long id) {
-        List<DepartmentsEmployees> list;
-        list = (List<DepartmentsEmployees>) departmentsEmployeesRepository.findByDepartmentId(id);
+    public List<DepartmentEmployee> findByDepartmentId(Long id) {
+        List<DepartmentEmployee> list;
+        list = (List<DepartmentEmployee>) departmentsEmployeesRepository.findByDepartmentId(id);
 
         if (!list.isEmpty()) {
             return list;
@@ -36,9 +35,9 @@ public class DepartmentsEmployeesImpl implements DepartmentsEmployeesService {
     }
 
     @Override
-    public List<DepartmentsEmployees> findByDepartmentName(String name) {
-        List<DepartmentsEmployees> list;
-        list = (List<DepartmentsEmployees>) departmentsEmployeesRepository.findByDepartmentName(name);
+    public List<DepartmentEmployee> findByDepartmentName(String name) {
+        List<DepartmentEmployee> list;
+        list = (List<DepartmentEmployee>) departmentsEmployeesRepository.findByDepartmentName(name);
 
         if (!list.isEmpty()) {
             return list;
@@ -48,9 +47,9 @@ public class DepartmentsEmployeesImpl implements DepartmentsEmployeesService {
     }
 
     @Override
-    public List<DepartmentsEmployees> findByEmployeeId(Long id) {
-        List<DepartmentsEmployees> list;
-        list = (List<DepartmentsEmployees>) departmentsEmployeesRepository.findByEmployeeId(id);
+    public List<DepartmentEmployee> findByEmployeeId(Long id) {
+        List<DepartmentEmployee> list;
+        list = (List<DepartmentEmployee>) departmentsEmployeesRepository.findByEmployeeId(id);
 
         if (!list.isEmpty()) {
             return list;
@@ -60,9 +59,9 @@ public class DepartmentsEmployeesImpl implements DepartmentsEmployeesService {
     }
 
     @Override
-    public List<DepartmentsEmployees> findByEmployeeName(String first, String last, String pather) {
-        List<DepartmentsEmployees> list;
-        list = (List<DepartmentsEmployees>) departmentsEmployeesRepository.findByEmployeeName(first, last, pather);
+    public List<DepartmentEmployee> findByEmployeeName(String first, String last, String pather) {
+        List<DepartmentEmployee> list;
+        list = (List<DepartmentEmployee>) departmentsEmployeesRepository.findByEmployeeName(first, last, pather);
 
         if (!list.isEmpty()) {
             return list;
@@ -81,15 +80,15 @@ public class DepartmentsEmployeesImpl implements DepartmentsEmployeesService {
     }
 
     @Override
-    public DepartmentsEmployees addDepartmentsEmployees(DepartmentsEmployees departmentsEmployees) {
-        return departmentsEmployeesRepository.save(departmentsEmployees);
+    public DepartmentEmployee addDepartmentsEmployees(DepartmentEmployee departmentEmployee) {
+        return departmentsEmployeesRepository.save(departmentEmployee);
     }
 
     @Override
-    public DepartmentsEmployees updateDepartmentsEmployees(DepartmentsEmployees departmentsEmployees) {
-        Optional<DepartmentsEmployees> tmp = departmentsEmployeesRepository.findById(departmentsEmployees.getId());
+    public DepartmentEmployee updateDepartmentsEmployees(DepartmentEmployee departmentEmployee) {
+        Optional<DepartmentEmployee> tmp = departmentsEmployeesRepository.findById(departmentEmployee.getId());
         if (tmp.isPresent()) {
-            return departmentsEmployeesRepository.save(departmentsEmployees);
+            return departmentsEmployeesRepository.save(departmentEmployee);
         } else {
             throw new DepartmentsEmployeesNotFoundException("DepartmentsEmployees not found!");
         }

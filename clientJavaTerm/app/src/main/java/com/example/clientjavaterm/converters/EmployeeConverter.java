@@ -1,6 +1,6 @@
 package com.example.clientjavaterm.converters;
 
-import com.example.clientjavaterm.entity.Employees;
+import com.example.clientjavaterm.entity.Employee;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -9,14 +9,14 @@ import com.google.gson.JsonSerializationContext;
 
 import java.lang.reflect.Type;
 
-public class EmployeeConverter implements BaseConverter<Employees> {
+public class EmployeeConverter implements BaseConverter<Employee> {
     @Override
     public Class getConverterClass() {
-        return Employees.class;
+        return Employee.class;
     }
 
     @Override
-    public Employees deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+    public Employee deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject object = json.getAsJsonObject();
         Long id = object.get("id").getAsLong();
         String first = object.get("firstName").getAsString();
@@ -24,11 +24,11 @@ public class EmployeeConverter implements BaseConverter<Employees> {
         String pather = object.get("patherName").getAsString();
         String position = object.get("position").getAsString();
         Float salary = object.get("salary").getAsFloat();
-        return new Employees(id, first, last, pather, position, salary);
+        return new Employee(id, first, last, pather, position, salary);
     }
 
     @Override
-    public JsonElement serialize(Employees src, Type typeOfSrc, JsonSerializationContext context) {
+    public JsonElement serialize(Employee src, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject object = new JsonObject();
         object.addProperty("id", src.getId());
         object.addProperty("firstName", src.getFirstName());

@@ -1,7 +1,6 @@
 package com.example.clientjavaterm;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,9 +18,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.clientjavaterm.converters.DepartmentConverter;
 import com.example.clientjavaterm.converters.DepartmentsEmployeesConverter;
 import com.example.clientjavaterm.converters.EmployeeConverter;
-import com.example.clientjavaterm.entity.Departments;
-import com.example.clientjavaterm.entity.DepartmentsEmployees;
-import com.example.clientjavaterm.entity.Employees;
+import com.example.clientjavaterm.entity.Department;
+import com.example.clientjavaterm.entity.DepartmentEmployee;
+import com.example.clientjavaterm.entity.Employee;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -34,7 +33,7 @@ import java.util.List;
 import static android.text.InputType.TYPE_CLASS_NUMBER;
 import static android.text.InputType.TYPE_CLASS_TEXT;
 
-public class DepartmentsEmployeesActivity extends AppCompatActivity {
+public class DepartmentEmployeeActivity extends AppCompatActivity {
 
     private EditText ETId;
     private Spinner spinnerDepartment;
@@ -51,16 +50,16 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
     private EditText ETFindFirstName;
     private EditText ETFindPatherName;
     private Spinner spinner;
-    private List<DepartmentsEmployees> array;
+    private List<DepartmentEmployee> array;
     private String token;
     private String urlString;
     private int spinnerItem;
     private int currentRecord;
     private int arrayLength;
-    private Departments currentDepartment;
-    private CustomSpinnerAdapter<Departments> departmentAdapter;
-    private Employees currentEmployee;
-    private CustomSpinnerAdapter<Employees> employeeAdapter;
+    private Department currentDepartment;
+    private CustomSpinnerAdapter<Department> departmentAdapter;
+    private Employee currentEmployee;
+    private CustomSpinnerAdapter<Employee> employeeAdapter;
     private RequestHandler handler;
     private DepartmentsEmployeesConverter converter;
     private Gson DEGson;
@@ -183,13 +182,17 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
             }
         });
 
+        spinnerItem = 1;
+        BFindClickListener();
+        spinnerItem = 0;
+
         departmentAdapter = new CustomSpinnerAdapter<>(this, android.R.layout.simple_spinner_item);
         spinnerDepartment.setAdapter(departmentAdapter);
 
         spinnerDepartment.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                currentDepartment = (Departments) parent.getItemAtPosition(position);
+                currentDepartment = (Department) parent.getItemAtPosition(position);
             }
 
             @Override
@@ -213,7 +216,7 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
         spinnerEmployee.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                currentEmployee = (Employees) parent.getItemAtPosition(position);
+                currentEmployee = (Employee) parent.getItemAtPosition(position);
             }
 
             @Override
@@ -309,13 +312,13 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
                 GsonBuilder builder = new GsonBuilder();
                 builder.registerTypeAdapter(lConverter.getConverterClass(), lConverter);
                 Gson departmentGson = builder.create();
-                ResultConverter<Departments> converter = new ResultConverter<>(departmentGson);
-                Type listType = new TypeToken<List<Departments>>(){}.getType();
-                Type type = new TypeToken<Departments>(){}.getType();
-                List<Departments> list = converter.getListFromResult(result, listType, type);
+                ResultConverter<Department> converter = new ResultConverter<>(departmentGson);
+                Type listType = new TypeToken<List<Department>>(){}.getType();
+                Type type = new TypeToken<Department>(){}.getType();
+                List<Department> list = converter.getListFromResult(result, listType, type);
                 if (!list.isEmpty()) {
 
-                    final List<Departments> finalList = list;
+                    final List<Department> finalList = list;
                     System.out.println("departments: " + finalList.size());
 
                     runOnUiThread(new Runnable() {
@@ -348,13 +351,13 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
                 GsonBuilder builder = new GsonBuilder();
                 builder.registerTypeAdapter(lConverter.getConverterClass(), lConverter);
                 Gson employeeGson = builder.create();
-                ResultConverter<Employees> converter = new ResultConverter<>(employeeGson);
-                Type listType = new TypeToken<List<Employees>>(){}.getType();
-                Type type = new TypeToken<Employees>(){}.getType();
-                List<Employees> list = converter.getListFromResult(result, listType, type);
+                ResultConverter<Employee> converter = new ResultConverter<>(employeeGson);
+                Type listType = new TypeToken<List<Employee>>(){}.getType();
+                Type type = new TypeToken<Employee>(){}.getType();
+                List<Employee> list = converter.getListFromResult(result, listType, type);
                 if (!list.isEmpty()) {
 
-                    final List<Employees> finalList = list;
+                    final List<Employee> finalList = list;
                     System.out.println("employees: " + finalList.size());
 
                     runOnUiThread(new Runnable() {
@@ -381,10 +384,10 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
         CallBack<String> callBack = new CallBack<String>() {
             @Override
             public void onSuccess(String result) {
-                ResultConverter<DepartmentsEmployees> converter = new ResultConverter<>(DEGson);
-                Type listType = new TypeToken<List<DepartmentsEmployees>>(){}.getType();
-                Type type = new TypeToken<DepartmentsEmployees>(){}.getType();
-                List<DepartmentsEmployees> list = converter.getListFromResult(result, listType, type);
+                ResultConverter<DepartmentEmployee> converter = new ResultConverter<>(DEGson);
+                Type listType = new TypeToken<List<DepartmentEmployee>>(){}.getType();
+                Type type = new TypeToken<DepartmentEmployee>(){}.getType();
+                List<DepartmentEmployee> list = converter.getListFromResult(result, listType, type);
                 if (list.isEmpty()) {
                     createToast("Nothing found!");
                 } else {
@@ -502,22 +505,22 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
         CallBack<String> callBack = new CallBack<String>() {
             @Override
             public void onSuccess(String result) {
-                ResultConverter<DepartmentsEmployees> converter = new ResultConverter<>(DEGson);
-                Type listType = new TypeToken<List<DepartmentsEmployees>>(){}.getType();
-                Type type = new TypeToken<DepartmentsEmployees>(){}.getType();
-                List<DepartmentsEmployees> list = converter.getListFromResult(result, listType, type);
+                ResultConverter<DepartmentEmployee> converter = new ResultConverter<>(DEGson);
+                Type listType = new TypeToken<List<DepartmentEmployee>>(){}.getType();
+                Type type = new TypeToken<DepartmentEmployee>(){}.getType();
+                List<DepartmentEmployee> list = converter.getListFromResult(result, listType, type);
 
                 if (currentDepartment == null || currentEmployee == null) {
                     createToast("Not enough information!");
                     return;
                 }
-                DepartmentsEmployees object = new DepartmentsEmployees(null, currentDepartment, currentEmployee);
+                DepartmentEmployee object = new DepartmentEmployee(null, currentDepartment, currentEmployee);
 
                 if (!list.contains(object)) {
                     CallBack<String> call = new CallBack<String>() {
                         @Override
                         public void onSuccess(String result) {
-                            final DepartmentsEmployees de = DEGson.fromJson(result, DepartmentsEmployees.class);
+                            final DepartmentEmployee de = DEGson.fromJson(result, DepartmentEmployee.class);
                             runOnUiThread(new Runnable() {
                                 public void run() {
                                     ETId.setText(de.getId().toString());
@@ -564,11 +567,11 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
         CallBack<String> callBack = new CallBack<String>() {
             @Override
             public void onSuccess(String result) {
-                DepartmentsEmployees de = DEGson.fromJson(result, DepartmentsEmployees.class);
-                DepartmentsEmployees curr = array.get(currentRecord);
+                DepartmentEmployee de = DEGson.fromJson(result, DepartmentEmployee.class);
+                DepartmentEmployee curr = array.get(currentRecord);
                 curr.setId(de.getId());
-                curr.setDepartments(de.getDepartments());
-                curr.setEmployees(de.getEmployees());
+                curr.setDepartment(de.getDepartment());
+                curr.setEmployee(de.getEmployee());
 
                 createToast("Update completed successfully!");
             }
@@ -585,7 +588,7 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
             if (currentDepartment == null || currentEmployee == null) {
                 createToast("Not enough information!");
             } else {
-                DepartmentsEmployees object = new DepartmentsEmployees(Long.parseLong(id), currentDepartment, currentEmployee);
+                DepartmentEmployee object = new DepartmentEmployee(Long.parseLong(id), currentDepartment, currentEmployee);
                 String json = DEGson.toJson(object);
                 String url = "departmentsEmployees/update";
                 handler.setUrlResource(url);
@@ -642,22 +645,22 @@ public class DepartmentsEmployeesActivity extends AppCompatActivity {
     private void setFieldsWithCurrentDE(final int num) {
         runOnUiThread(new Runnable() {
             public void run() {
-                DepartmentsEmployees object = array.get(num);
+                DepartmentEmployee object = array.get(num);
                 ETId.setText(object.getId().toString());
 
-                List<Departments> list1 = departmentAdapter.getList();
+                List<Department> list1 = departmentAdapter.getList();
                 int ind = -1;
                 for (int i = 0; i < list1.size(); i++) {
-                    if (list1.get(i).getId().equals(object.getDepartments().getId())) {
+                    if (list1.get(i).getId().equals(object.getDepartment().getId())) {
                         ind = i;
                     }
                 }
                 spinnerDepartment.setSelection(ind);
 
-                List<Employees> list2 = employeeAdapter.getList();
+                List<Employee> list2 = employeeAdapter.getList();
                 ind = -1;
                 for (int i = 0; i < list2.size(); i++) {
-                    if (list2.get(i).getId().equals(object.getEmployees().getId())) {
+                    if (list2.get(i).getId().equals(object.getEmployee().getId())) {
                         ind = i;
                     }
                 }

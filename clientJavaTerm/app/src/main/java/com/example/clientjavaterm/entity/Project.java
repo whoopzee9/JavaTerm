@@ -4,20 +4,20 @@ import androidx.annotation.Nullable;
 
 import java.sql.Date;
 
-public class Projects {
+public class Project {
     private Long id;
     private String name;
     private Float cost;
-    private Departments departments;
+    private Department department;
     private Date dateBeg;
     private Date dateEnd;
     private Date dateEndReal;
 
-    public Projects(Long id, String name, Float cost, Departments departments, Date dateBeg, Date dateEnd, Date dateEndReal) {
+    public Project(Long id, String name, Float cost, Department department, Date dateBeg, Date dateEnd, Date dateEndReal) {
         this.id = id;
         this.name = name;
         this.cost = cost;
-        this.departments = departments;
+        this.department = department;
         this.dateBeg = dateBeg;
         this.dateEnd = dateEnd;
         this.dateEndReal = dateEndReal;
@@ -47,12 +47,12 @@ public class Projects {
         this.cost = cost;
     }
 
-    public Departments getDepartments() {
-        return departments;
+    public Department getDepartment() {
+        return department;
     }
 
-    public void setDepartments(Departments departments) {
-        this.departments = departments;
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 
     public Date getDateBeg() {
@@ -89,10 +89,10 @@ public class Projects {
             return false;
         }
 
-        Projects proj = (Projects) obj;
+        Project proj = (Project) obj;
         return name.equals(proj.name) &&
                 cost.equals(proj.cost) &&
-                departments.equals(proj.departments) &&
+                department.equals(proj.department) &&
                 dateBeg.equals(proj.dateBeg) &&
                 dateEnd.equals(proj.dateEnd) &&
                 dateEndReal.equals(proj.dateEndReal);

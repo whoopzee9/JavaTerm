@@ -3,7 +3,7 @@ package com.course.service.impl;
 import com.course.exception.DepartmentDeletionException;
 import com.course.exception.DepartmentNotFoundException;
 import com.course.repository.DepartmentsRepository;
-import com.course.entity.Departments;
+import com.course.entity.Department;
 import com.course.service.DepartmentsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -20,13 +20,13 @@ public class DepartmentsServiceImpl implements DepartmentsService {
     private DepartmentsRepository departmentsRepository;
 
     @Override
-    public List<Departments> departmentsList() {
-        return (List<Departments>) departmentsRepository.findAll();
+    public List<Department> departmentsList() {
+        return (List<Department>) departmentsRepository.findAll();
     }
 
     @Override
-    public Departments findDepartmentsById(Long id) {
-        Optional<Departments> department = departmentsRepository.findById(id);
+    public Department findDepartmentsById(Long id) {
+        Optional<Department> department = departmentsRepository.findById(id);
 
         if (department.isPresent()) {
             return department.get();
@@ -36,8 +36,8 @@ public class DepartmentsServiceImpl implements DepartmentsService {
     }
 
     @Override
-    public Departments findDepartmentsByName(String name) {
-        Departments department = departmentsRepository.findByName(name);
+    public Department findDepartmentsByName(String name) {
+        Department department = departmentsRepository.findByName(name);
 
         if (department != null) {
             return department;
@@ -58,15 +58,15 @@ public class DepartmentsServiceImpl implements DepartmentsService {
     }
 
     @Override
-    public Departments addDepartments(Departments departments) {
-        return departmentsRepository.save(departments);
+    public Department addDepartments(Department department) {
+        return departmentsRepository.save(department);
     }
 
     @Override
-    public Departments updateDepartments(Departments departments) {
-        Optional<Departments> tmp = departmentsRepository.findById(departments.getId());
+    public Department updateDepartments(Department department) {
+        Optional<Department> tmp = departmentsRepository.findById(department.getId());
         if (tmp.isPresent()) {
-            return departmentsRepository.save(departments);
+            return departmentsRepository.save(department);
         } else {
             throw new DepartmentNotFoundException("Department nor found!");
         }

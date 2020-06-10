@@ -1,6 +1,6 @@
 package com.course;
 
-import com.course.entity.Employees;
+import com.course.entity.Employee;
 import com.course.repository.EmployeesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -22,9 +22,9 @@ public class TestDataUnit implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        employeesRepository.save(new Employees("Alex", "Bublyaev", "Vyacheslavovich",
+        employeesRepository.save(new Employee("Alex", "Bublyaev", "Vyacheslavovich",
                 "CEO", (float) 10000));
-        employeesRepository.save(new Employees("Alex1", "Bublyaev1", "Vyacheslavovich1",
+        employeesRepository.save(new Employee("Alex1", "Bublyaev1", "Vyacheslavovich1",
                 "User", (float) 100));
 
         /*userRepository.save(new User("user", passwordEncoder.encode("pwd"),

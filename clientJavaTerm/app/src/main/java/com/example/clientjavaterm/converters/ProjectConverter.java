@@ -1,7 +1,7 @@
 package com.example.clientjavaterm.converters;
 
-import com.example.clientjavaterm.entity.Departments;
-import com.example.clientjavaterm.entity.Projects;
+import com.example.clientjavaterm.entity.Department;
+import com.example.clientjavaterm.entity.Project;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -13,19 +13,19 @@ import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-public class ProjectConverter implements BaseConverter<Projects> {
+public class ProjectConverter implements BaseConverter<Project> {
     @Override
     public Class getConverterClass() {
-        return Projects.class;
+        return Project.class;
     }
 
     @Override
-    public Projects deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+    public Project deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject object = json.getAsJsonObject();
         Long id = object.get("id").getAsLong();
         String name = object.get("name").getAsString();
         Float cost = object.get("cost").getAsFloat();
-        Departments department = context.deserialize(object.get("departments"), Departments.class);
+        Department department = context.deserialize(object.get("departments"), Department.class);
         Date beg = null;
         Date end = null;
         Date endReal = null;
@@ -40,16 +40,16 @@ public class ProjectConverter implements BaseConverter<Projects> {
             e.printStackTrace();
         }
 
-        return new Projects(id, name, cost, department, beg, end, endReal);
+        return new Project(id, name, cost, department, beg, end, endReal);
     }
 
     @Override
-    public JsonElement serialize(Projects src, Type typeOfSrc, JsonSerializationContext context) {
+    public JsonElement serialize(Project src, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject object = new JsonObject();
         object.addProperty("id", src.getId());
         object.addProperty("name", src.getName());
         object.addProperty("cost", src.getCost());
-        object.add("departments", context.serialize(src.getDepartments()));
+        object.add("departments", context.serialize(src.getDepartment()));
         object.addProperty("dateBeg", src.getDateBeg().getTime());
         object.addProperty("dateEnd", src.getDateEnd().getTime());
         object.addProperty("dateEndReal", src.getDateEndReal().getTime());

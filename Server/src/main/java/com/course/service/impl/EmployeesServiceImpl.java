@@ -3,7 +3,7 @@ package com.course.service.impl;
 import com.course.exception.EmployeeDeletionException;
 import com.course.exception.EmployeeNotFoundException;
 import com.course.repository.EmployeesRepository;
-import com.course.entity.Employees;
+import com.course.entity.Employee;
 import com.course.service.EmployeesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -24,13 +24,13 @@ public class EmployeesServiceImpl implements EmployeesService {
     }
 
     @Override
-    public List<Employees> employeesList() {
-        return (List<Employees>) employeesRepository.findAll();
+    public List<Employee> employeesList() {
+        return (List<Employee>) employeesRepository.findAll();
     }
 
     @Override
-    public Employees findEmployeesById(Long id) {
-        Optional<Employees> employees = employeesRepository.findById(id);
+    public Employee findEmployeesById(Long id) {
+        Optional<Employee> employees = employeesRepository.findById(id);
 
         if (employees.isPresent()) {
             return employees.get();
@@ -40,8 +40,8 @@ public class EmployeesServiceImpl implements EmployeesService {
     }
 
     @Override
-    public List<Employees> findEmployeesByName(String first, String last, String pather) {
-        List<Employees> employees = (List<Employees>) employeesRepository.findByName(first, last, pather);
+    public List<Employee> findEmployeesByName(String first, String last, String pather) {
+        List<Employee> employees = (List<Employee>) employeesRepository.findByName(first, last, pather);
 
         if (!employees.isEmpty()) {
             return employees;
@@ -62,15 +62,15 @@ public class EmployeesServiceImpl implements EmployeesService {
     }
 
     @Override
-    public Employees addEmployees(Employees employees) {
-        return employeesRepository.save(employees);
+    public Employee addEmployees(Employee employee) {
+        return employeesRepository.save(employee);
     }
 
     @Override
-    public Employees updateEmployees(Employees employees) {
-        Optional<Employees> tmp = employeesRepository.findById(employees.getId());
+    public Employee updateEmployees(Employee employee) {
+        Optional<Employee> tmp = employeesRepository.findById(employee.getId());
         if (tmp.isPresent()) {
-            return employeesRepository.save(employees);
+            return employeesRepository.save(employee);
         } else {
             throw new EmployeeNotFoundException("Employee not found!");
         }

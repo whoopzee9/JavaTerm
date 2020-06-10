@@ -2,7 +2,7 @@ package com.course.service.impl;
 
 import com.course.exception.ProjectNotFoundException;
 import com.course.repository.ProjectsRepository;
-import com.course.entity.Projects;
+import com.course.entity.Project;
 import com.course.service.ProjectsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -18,13 +18,13 @@ public class ProjectsServiceImpl implements ProjectsService {
     private ProjectsRepository projectsRepository;
 
     @Override
-    public List<Projects> projectsList() {
-        return (List<Projects>) projectsRepository.findAll();
+    public List<Project> projectsList() {
+        return (List<Project>) projectsRepository.findAll();
     }
 
     @Override
-    public Projects findProjectsById(Long id) {
-        Optional<Projects> projects = projectsRepository.findById(id);
+    public Project findProjectsById(Long id) {
+        Optional<Project> projects = projectsRepository.findById(id);
 
         if (projects.isPresent()) {
             return projects.get();
@@ -34,19 +34,19 @@ public class ProjectsServiceImpl implements ProjectsService {
     }
 
     @Override
-    public Projects findProjectsByName(String name) {
-        Projects projects = projectsRepository.findByName(name);
+    public Project findProjectsByName(String name) {
+        Project project = projectsRepository.findByName(name);
 
-        if (projects != null) {
-            return projects;
+        if (project != null) {
+            return project;
         } else {
             throw new ProjectNotFoundException("Project not found!");
         }
     }
 
     @Override
-    public List<Projects> findByDepartmentId(Long id) {
-        List<Projects> list = (List<Projects>) projectsRepository.findByDepartmentId(id);
+    public List<Project> findByDepartmentId(Long id) {
+        List<Project> list = (List<Project>) projectsRepository.findByDepartmentId(id);
         if (!list.isEmpty()) {
             return list;
         } else {
@@ -55,8 +55,8 @@ public class ProjectsServiceImpl implements ProjectsService {
     }
 
     @Override
-    public List<Projects> findByDepartmentName(String name) {
-        List<Projects> list = (List<Projects>) projectsRepository.findByDepartmentName(name);
+    public List<Project> findByDepartmentName(String name) {
+        List<Project> list = (List<Project>) projectsRepository.findByDepartmentName(name);
         if (!list.isEmpty()) {
             return list;
         } else {
@@ -74,15 +74,15 @@ public class ProjectsServiceImpl implements ProjectsService {
     }
 
     @Override
-    public Projects addProjects(Projects projects) {
-        return projectsRepository.save(projects);
+    public Project addProjects(Project project) {
+        return projectsRepository.save(project);
     }
 
     @Override
-    public Projects updateProjects(Projects projects) {
-        Optional<Projects> tmp = projectsRepository.findById(projects.getId());
+    public Project updateProjects(Project project) {
+        Optional<Project> tmp = projectsRepository.findById(project.getId());
         if (tmp.isPresent()) {
-            return projectsRepository.save(projects);
+            return projectsRepository.save(project);
         } else {
             throw new ProjectNotFoundException("Project not found!");
         }

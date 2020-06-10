@@ -1,6 +1,6 @@
 package com.course.controller;
 
-import com.course.entity.Projects;
+import com.course.entity.Project;
 import com.course.exception.InvalidJwtAuthenticationException;
 import com.course.exception.ProjectNotFoundException;
 import com.course.service.ProjectsService;
@@ -19,18 +19,18 @@ public class ProjectsController {
     private ProjectsService projectsService;
 
     @PostMapping(value = "/add", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<Projects> addProject(@RequestBody Projects projects) {
+    public ResponseEntity<Project> addProject(@RequestBody Project project) {
         try {
-            return new ResponseEntity<>(projectsService.addProjects(projects), HttpStatus.CREATED);
+            return new ResponseEntity<>(projectsService.addProjects(project), HttpStatus.CREATED);
         } catch (InvalidJwtAuthenticationException ex) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
         }
     }
 
     @PutMapping(value = "/update", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<Projects> updateProject(@RequestBody Projects projects) {
+    public ResponseEntity<Project> updateProject(@RequestBody Project project) {
         try {
-            return new ResponseEntity<>(projectsService.updateProjects(projects), HttpStatus.OK);
+            return new ResponseEntity<>(projectsService.updateProjects(project), HttpStatus.OK);
         } catch (ProjectNotFoundException ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         } catch (InvalidJwtAuthenticationException ex) {
@@ -39,7 +39,7 @@ public class ProjectsController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Projects>> getAllProjects() {
+    public ResponseEntity<List<Project>> getAllProjects() {
         try {
             return new ResponseEntity<>(projectsService.projectsList(), HttpStatus.OK);
         } catch (InvalidJwtAuthenticationException ex) {
@@ -48,7 +48,7 @@ public class ProjectsController {
     }
 
     @GetMapping("/getById/{id}")
-    public ResponseEntity<Projects> getProjectById(@PathVariable("id") Long id) {
+    public ResponseEntity<Project> getProjectById(@PathVariable("id") Long id) {
         try {
             return new ResponseEntity<>(projectsService.findProjectsById(id), HttpStatus.OK);
         } catch (ProjectNotFoundException ex) {
@@ -59,7 +59,7 @@ public class ProjectsController {
     }
 
     @GetMapping("/getByName/{name}")
-    public ResponseEntity<Projects> getProjectByName(@PathVariable("name") String name) {
+    public ResponseEntity<Project> getProjectByName(@PathVariable("name") String name) {
         try {
             return new ResponseEntity<>(projectsService.findProjectsByName(name), HttpStatus.OK);
         } catch (ProjectNotFoundException ex) {
@@ -70,7 +70,7 @@ public class ProjectsController {
     }
 
     @GetMapping("/getByDepartmentId/{id}")
-    public ResponseEntity<List<Projects>> getByDepartmentId(@PathVariable("id") Long id) {
+    public ResponseEntity<List<Project>> getByDepartmentId(@PathVariable("id") Long id) {
         try {
             return new ResponseEntity<>(projectsService.findByDepartmentId(id), HttpStatus.OK);
         } catch (ProjectNotFoundException ex) {
@@ -81,7 +81,7 @@ public class ProjectsController {
     }
 
     @GetMapping("/getByDepartmentName/{name}")
-    public ResponseEntity<List<Projects>> getByDepartmentName(@PathVariable("name") String name) {
+    public ResponseEntity<List<Project>> getByDepartmentName(@PathVariable("name") String name) {
         try {
             return new ResponseEntity<>(projectsService.findByDepartmentName(name), HttpStatus.OK);
         } catch (ProjectNotFoundException ex) {

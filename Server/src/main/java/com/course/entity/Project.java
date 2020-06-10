@@ -5,7 +5,7 @@ import java.sql.Date;
 
 @Entity
 @Table(name = "projects")
-public class Projects {
+public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
@@ -17,9 +17,9 @@ public class Projects {
     @Column
     private Float cost;
 
-    @ManyToOne(targetEntity = Departments.class, cascade = CascadeType.MERGE)
+    @ManyToOne(targetEntity = Department.class, cascade = CascadeType.MERGE)
     @JoinColumn(name = "department_id", nullable = false)
-    private Departments departments;
+    private Department department;
 
     @Column(name = "date_beg", length = 10)
     private Date dateBeg;
@@ -30,13 +30,13 @@ public class Projects {
     @Column(name = "date_end_real", length = 10)
     private Date dateEndReal;
 
-    public Projects() {
+    public Project() {
     }
 
-    public Projects(String name, Float cost, Departments departments, Date dateBeg, Date dateEnd, Date dateEndReal) {
+    public Project(String name, Float cost, Department department, Date dateBeg, Date dateEnd, Date dateEndReal) {
         this.name = name;
         this.cost = cost;
-        this.departments = departments;
+        this.department = department;
         this.dateBeg = dateBeg;
         this.dateEnd = dateEnd;
         this.dateEndReal = dateEndReal;
@@ -66,12 +66,12 @@ public class Projects {
         this.cost = cost;
     }
 
-    public Departments getDepartments() {
-        return departments;
+    public Department getDepartment() {
+        return department;
     }
 
-    public void setDepartments(Departments departments) {
-        this.departments = departments;
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 
     public Date getDateBeg() {
@@ -100,7 +100,7 @@ public class Projects {
 
     @Override
     public String toString() {
-        return "Project { " + id + " ; " + name + " ; " + cost + " ; " + departments.getName() + " ; " +
+        return "Project { " + id + " ; " + name + " ; " + cost + " ; " + department.getName() + " ; " +
                 dateBeg + " ; " + dateEnd + " ; " + dateEndReal + " }";
     }
 }

@@ -3,11 +3,11 @@ package com.example.clientjavaterm.entity;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-public class Departments {
+public class Department {
     private Long id;
     private String name;
 
-    public Departments(Long id, String name) {
+    public Department(Long id, String name) {
         this.id = id;
         this.name = name;
     }
@@ -44,7 +44,7 @@ public class Departments {
             return false;
         }
 
-        Departments dep = (Departments) obj;
+        Department dep = (Department) obj;
         return name.equals(dep.name);
     }
 }

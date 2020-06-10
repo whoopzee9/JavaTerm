@@ -1,6 +1,6 @@
 package com.course.controller;
 
-import com.course.entity.DepartmentsEmployees;
+import com.course.entity.DepartmentEmployee;
 import com.course.exception.DepartmentsEmployeesNotFoundException;
 import com.course.exception.InvalidJwtAuthenticationException;
 import com.course.service.DepartmentsEmployeesService;
@@ -19,7 +19,7 @@ public class DepartmentsEmployeesController {
     private DepartmentsEmployeesService service;
 
     @PostMapping(value = "/add", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<DepartmentsEmployees> addDepartmentsEmployees(@RequestBody DepartmentsEmployees DE) {
+    public ResponseEntity<DepartmentEmployee> addDepartmentsEmployees(@RequestBody DepartmentEmployee DE) {
         try {
             return new ResponseEntity<>(service.addDepartmentsEmployees(DE), HttpStatus.CREATED);
         } catch (InvalidJwtAuthenticationException ex) {
@@ -28,7 +28,7 @@ public class DepartmentsEmployeesController {
     }
 
     @PutMapping(value = "/update", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<DepartmentsEmployees> updateDepartmentsEmployees(@RequestBody DepartmentsEmployees DE) {
+    public ResponseEntity<DepartmentEmployee> updateDepartmentsEmployees(@RequestBody DepartmentEmployee DE) {
         try {
             return new ResponseEntity<>(service.updateDepartmentsEmployees(DE), HttpStatus.OK);
         } catch (DepartmentsEmployeesNotFoundException ex) {
@@ -39,7 +39,7 @@ public class DepartmentsEmployeesController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<DepartmentsEmployees>> getAllDepartmentsEmployees() {
+    public ResponseEntity<List<DepartmentEmployee>> getAllDepartmentsEmployees() {
         try {
             return new ResponseEntity<>(service.departmentsEmployeesList(), HttpStatus.OK);
         } catch (InvalidJwtAuthenticationException ex) {
@@ -48,7 +48,7 @@ public class DepartmentsEmployeesController {
     }
 
     @GetMapping("/getByDepartmentId/{id}")
-    public ResponseEntity<List<DepartmentsEmployees>> getByDepartmentId(@PathVariable("id") Long id) {
+    public ResponseEntity<List<DepartmentEmployee>> getByDepartmentId(@PathVariable("id") Long id) {
         try {
             return new ResponseEntity<>(service.findByDepartmentId(id), HttpStatus.OK);
         } catch (DepartmentsEmployeesNotFoundException ex) {
@@ -59,7 +59,7 @@ public class DepartmentsEmployeesController {
     }
 
     @GetMapping("/getByDepartmentName/{name}")
-    public ResponseEntity<List<DepartmentsEmployees>> getByDepartmentName(@PathVariable("name") String name) {
+    public ResponseEntity<List<DepartmentEmployee>> getByDepartmentName(@PathVariable("name") String name) {
         try {
             return new ResponseEntity<>(service.findByDepartmentName(name), HttpStatus.OK);
         } catch (DepartmentsEmployeesNotFoundException ex) {
@@ -70,7 +70,7 @@ public class DepartmentsEmployeesController {
     }
 
     @GetMapping("/getByEmployeeId/{id}")
-    public ResponseEntity<List<DepartmentsEmployees>> getByEmployeeId(@PathVariable("id") Long id) {
+    public ResponseEntity<List<DepartmentEmployee>> getByEmployeeId(@PathVariable("id") Long id) {
         try {
             return new ResponseEntity<>(service.findByEmployeeId(id), HttpStatus.OK);
         } catch (DepartmentsEmployeesNotFoundException ex) {
@@ -81,9 +81,9 @@ public class DepartmentsEmployeesController {
     }
 
     @GetMapping("/getByEmployeeName/{last}/{first}/{pather}")
-    public ResponseEntity<List<DepartmentsEmployees>> getByEmployeeName(@PathVariable("first") String first,
-                                                                        @PathVariable("last") String last,
-                                                                        @PathVariable("pather") String pather) {
+    public ResponseEntity<List<DepartmentEmployee>> getByEmployeeName(@PathVariable("first") String first,
+                                                                      @PathVariable("last") String last,
+                                                                      @PathVariable("pather") String pather) {
         try {
             return new ResponseEntity<>(service.findByEmployeeName(first, last, pather), HttpStatus.OK);
         } catch (DepartmentsEmployeesNotFoundException ex) {

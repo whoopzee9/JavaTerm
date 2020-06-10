@@ -1,6 +1,6 @@
 package com.course.controller;
 
-import com.course.entity.Employees;
+import com.course.entity.Employee;
 import com.course.exception.EmployeeDeletionException;
 import com.course.exception.EmployeeNotFoundException;
 import com.course.exception.InvalidJwtAuthenticationException;
@@ -20,18 +20,18 @@ public class EmployeesController {
     private EmployeesService employeesService;
 
     @PostMapping(value = "/add", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<Employees> addEmployee(@RequestBody Employees employees) {
+    public ResponseEntity<Employee> addEmployee(@RequestBody Employee employee) {
         try {
-            return new ResponseEntity<>(employeesService.addEmployees(employees), HttpStatus.CREATED);
+            return new ResponseEntity<>(employeesService.addEmployees(employee), HttpStatus.CREATED);
         } catch (InvalidJwtAuthenticationException ex) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
         }
     }
 
     @PutMapping(value = "/update", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<Employees> updateEmployee(@RequestBody Employees employees) {
+    public ResponseEntity<Employee> updateEmployee(@RequestBody Employee employee) {
         try {
-            return new ResponseEntity<>(employeesService.updateEmployees(employees), HttpStatus.OK);
+            return new ResponseEntity<>(employeesService.updateEmployees(employee), HttpStatus.OK);
         } catch (EmployeeNotFoundException ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         } catch (InvalidJwtAuthenticationException ex) {
@@ -40,7 +40,7 @@ public class EmployeesController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Employees>> getAllEmployees() {
+    public ResponseEntity<List<Employee>> getAllEmployees() {
         try {
             return new ResponseEntity<>(employeesService.employeesList(), HttpStatus.OK);
         } catch (InvalidJwtAuthenticationException ex) {
@@ -49,7 +49,7 @@ public class EmployeesController {
     }
 
     @GetMapping("/getById/{id}")
-    public ResponseEntity<Employees> getEmployeeById(@PathVariable("id") Long id) {
+    public ResponseEntity<Employee> getEmployeeById(@PathVariable("id") Long id) {
         try {
             return new ResponseEntity<>(employeesService.findEmployeesById(id), HttpStatus.OK);
         } catch (EmployeeNotFoundException ex) {
@@ -60,9 +60,9 @@ public class EmployeesController {
     }
 
     @GetMapping("/getByName/{last}/{first}/{pather}")
-    public ResponseEntity<List<Employees>> getEmployeeByName(@PathVariable("first") String first,
-                                                             @PathVariable("last") String last,
-                                                             @PathVariable("pather") String pather) {
+    public ResponseEntity<List<Employee>> getEmployeeByName(@PathVariable("first") String first,
+                                                            @PathVariable("last") String last,
+                                                            @PathVariable("pather") String pather) {
         try {
             return new ResponseEntity<>(employeesService.findEmployeesByName(first, last, pather), HttpStatus.OK);
         } catch (EmployeeNotFoundException ex) {

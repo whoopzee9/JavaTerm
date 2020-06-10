@@ -35,7 +35,7 @@
             android:name=".ProjectActivity"
             android:windowSoftInputMode="adjustResize|stateVisible"/>
         <activity
-            android:name=".DepartmentsEmployeesActivity"
+            android:name=".DepartmentEmployeeActivity"
             android:windowSoftInputMode="adjustResize|stateVisible"/>
     </application>
 

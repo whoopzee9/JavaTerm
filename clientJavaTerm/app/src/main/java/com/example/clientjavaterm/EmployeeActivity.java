@@ -15,7 +15,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.clientjavaterm.converters.EmployeeConverter;
-import com.example.clientjavaterm.entity.Employees;
+import com.example.clientjavaterm.entity.Employee;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -49,7 +49,7 @@ public class EmployeeActivity extends AppCompatActivity {
     private EditText ETFindFirstName;
     private EditText ETFindPatherName;
     private Spinner spinner;
-    private List<Employees> array;
+    private List<Employee> array;
     private String token;
     private String urlString;
     private int spinnerItem;
@@ -161,6 +161,10 @@ public class EmployeeActivity extends AppCompatActivity {
             }
         });
 
+        spinnerItem = 1;
+        BFindClickListener();
+        spinnerItem = 0;
+
         BFind.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -232,10 +236,10 @@ public class EmployeeActivity extends AppCompatActivity {
         final CallBack<String> callBack = new CallBack<String>() {
             @Override
             public void onSuccess(String result) {
-                ResultConverter<Employees> converter = new ResultConverter<>(employeeGson);
-                Type listType = new TypeToken<List<Employees>>(){}.getType();
-                Type type = new TypeToken<Employees>(){}.getType();
-                List<Employees> list = converter.getListFromResult(result, listType, type);
+                ResultConverter<Employee> converter = new ResultConverter<>(employeeGson);
+                Type listType = new TypeToken<List<Employee>>(){}.getType();
+                Type type = new TypeToken<Employee>(){}.getType();
+                List<Employee> list = converter.getListFromResult(result, listType, type);
                 if (list.isEmpty()) {
                     createToast("Nothing found!");
                 } else {
@@ -346,22 +350,22 @@ public class EmployeeActivity extends AppCompatActivity {
         CallBack<String> callBack = new CallBack<String>() {
             @Override
             public void onSuccess(String result) {
-                ResultConverter<Employees> converter = new ResultConverter<>(employeeGson);
-                Type listType = new TypeToken<List<Employees>>(){}.getType();
-                Type type = new TypeToken<Employees>(){}.getType();
-                List<Employees> list = converter.getListFromResult(result, listType, type);
+                ResultConverter<Employee> converter = new ResultConverter<>(employeeGson);
+                Type listType = new TypeToken<List<Employee>>(){}.getType();
+                Type type = new TypeToken<Employee>(){}.getType();
+                List<Employee> list = converter.getListFromResult(result, listType, type);
 
                 if (last.isEmpty() || first.isEmpty() || pather.isEmpty() || position.isEmpty() || salary.isEmpty()) {
                     createToast("Not enough information!");
                     return;
                 }
-                Employees employee = new Employees(null, first, last, pather, position, Float.parseFloat(salary));
+                Employee employee = new Employee(null, first, last, pather, position, Float.parseFloat(salary));
 
                 if (!list.contains(employee)) {
                     CallBack<String> call = new CallBack<String>() {
                         @Override
                         public void onSuccess(String result) {
-                            final Employees empl = employeeGson.fromJson(result, Employees.class);
+                            final Employee empl = employeeGson.fromJson(result, Employee.class);
                             runOnUiThread(new Runnable() {
                                 public void run() {
                                     ETId.setText(empl.getId().toString());
@@ -413,8 +417,8 @@ public class EmployeeActivity extends AppCompatActivity {
         CallBack<String> callBack = new CallBack<String>() {
             @Override
             public void onSuccess(String result) {
-                Employees empl = employeeGson.fromJson(result, Employees.class);
-                Employees curr = array.get(currentRecord);
+                Employee empl = employeeGson.fromJson(result, Employee.class);
+                Employee curr = array.get(currentRecord);
                 curr.setId(empl.getId());
                 curr.setFirstName(empl.getFirstName());
                 curr.setLastName(empl.getLastName());
@@ -436,7 +440,7 @@ public class EmployeeActivity extends AppCompatActivity {
             if (last.isEmpty() || first.isEmpty() || pather.isEmpty() || position.isEmpty() || salary.isEmpty()) {
                 createToast("Not enough information!");
             } else {
-                Employees object = new Employees(Long.parseLong(id), first, last, pather, position, Float.parseFloat(salary));
+                Employee object = new Employee(Long.parseLong(id), first, last, pather, position, Float.parseFloat(salary));
                 String json = employeeGson.toJson(object);
                 String url = "employees/update";
                 handler.setUrlResource(url);
@@ -503,7 +507,7 @@ public class EmployeeActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             public void run() {
                 System.out.println(array.get(num).getClass());
-                Employees object = array.get(num);
+                Employee object = array.get(num);
                 ETId.setText(object.getId().toString());
                 ETLastName.setText(object.getLastName());
                 ETFirstName.setText(object.getFirstName());

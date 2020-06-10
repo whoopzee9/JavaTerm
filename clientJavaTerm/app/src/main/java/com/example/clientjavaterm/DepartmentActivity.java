@@ -15,7 +15,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.clientjavaterm.converters.DepartmentConverter;
-import com.example.clientjavaterm.entity.Departments;
+import com.example.clientjavaterm.entity.Department;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -23,7 +23,6 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static android.text.InputType.TYPE_CLASS_NUMBER;
@@ -43,7 +42,7 @@ public class DepartmentActivity extends AppCompatActivity {
     private Button BFind;
     private EditText ETFindNameOrId;
     private Spinner spinner;
-    private List<Departments> array;
+    private List<Department> array;
     private String token;
     private String urlString;
     private int spinnerItem;
@@ -140,6 +139,10 @@ public class DepartmentActivity extends AppCompatActivity {
             }
         });
 
+        spinnerItem = 1;
+        BFindClickListener();
+        spinnerItem = 0;
+
         BFind.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -211,10 +214,10 @@ public class DepartmentActivity extends AppCompatActivity {
         CallBack<String> callBack = new CallBack<String>() {
             @Override
             public void onSuccess(String result) {
-                ResultConverter<Departments> converter = new ResultConverter<>(departmentGson);
-                Type listType = new TypeToken<List<Departments>>(){}.getType();
-                Type type = new TypeToken<Departments>(){}.getType();
-                List<Departments> list = converter.getListFromResult(result, listType, type);
+                ResultConverter<Department> converter = new ResultConverter<>(departmentGson);
+                Type listType = new TypeToken<List<Department>>(){}.getType();
+                Type type = new TypeToken<Department>(){}.getType();
+                List<Department> list = converter.getListFromResult(result, listType, type);
                 if (list.isEmpty()) {
                     createToast("Nothing found!");
                 } else {
@@ -315,22 +318,22 @@ public class DepartmentActivity extends AppCompatActivity {
         CallBack<String> callBack = new CallBack<String>() {
             @Override
             public void onSuccess(String result) {
-                ResultConverter<Departments> converter = new ResultConverter<>(departmentGson);
-                Type listType = new TypeToken<List<Departments>>(){}.getType();
-                Type type = new TypeToken<Departments>(){}.getType();
-                List<Departments> list = converter.getListFromResult(result, listType, type);
-                Departments departments = new Departments(null, name);
+                ResultConverter<Department> converter = new ResultConverter<>(departmentGson);
+                Type listType = new TypeToken<List<Department>>(){}.getType();
+                Type type = new TypeToken<Department>(){}.getType();
+                List<Department> list = converter.getListFromResult(result, listType, type);
+                Department department = new Department(null, name);
 
                 if (name.isEmpty()) {
                     createToast("Not enough information!");
                     return;
                 }
 
-                if (!list.contains(departments)) {
+                if (!list.contains(department)) {
                     CallBack<String> callBack = new CallBack<String>() {
                         @Override
                         public void onSuccess(String result) {
-                            final Departments dep = departmentGson.fromJson(result, Departments.class);
+                            final Department dep = departmentGson.fromJson(result, Department.class);
                             runOnUiThread(new Runnable() {
                                 public void run() {
                                     ETId.setText(dep.getId().toString());
@@ -350,7 +353,7 @@ public class DepartmentActivity extends AppCompatActivity {
                         }
                     };
 
-                    String json = departmentGson.toJson(departments);
+                    String json = departmentGson.toJson(department);
                     String url = "departments/add";
                     handler.setUrlResource(url);
                     handler.setHttpMethod("POST");
@@ -379,8 +382,8 @@ public class DepartmentActivity extends AppCompatActivity {
         CallBack<String> callBack = new CallBack<String>() {
             @Override
             public void onSuccess(String result) {
-                Departments empl = departmentGson.fromJson(result, Departments.class);
-                Departments curr = array.get(currentRecord);
+                Department empl = departmentGson.fromJson(result, Department.class);
+                Department curr = array.get(currentRecord);
                 curr.setId(empl.getId());
                 curr.setName(empl.getName());
                 createToast("Update completed successfully!");
@@ -398,7 +401,7 @@ public class DepartmentActivity extends AppCompatActivity {
             if (name.isEmpty()) {
                 createToast("Not enough information!");
             } else {
-                Departments object = new Departments(Long.parseLong(id), name);
+                Department object = new Department(Long.parseLong(id), name);
                 String json = departmentGson.toJson(object);
                 String url = "departments/update";
                 handler.setUrlResource(url);
@@ -454,7 +457,7 @@ public class DepartmentActivity extends AppCompatActivity {
     private void setFieldsWithCurrentDepartment(final int num) {
         runOnUiThread(new Runnable() {
             public void run() {
-                Departments object = array.get(num);
+                Department object = array.get(num);
                 ETId.setText(object.getId().toString());
                 ETName.setText(object.getName());
                 TVPage.setText((num + 1) + "/" + arrayLength);

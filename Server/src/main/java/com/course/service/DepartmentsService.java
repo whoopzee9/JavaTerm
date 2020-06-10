@@ -1,14 +1,14 @@
 package com.course.service;
 
-import com.course.entity.Departments;
+import com.course.entity.Department;
 
 import java.util.List;
 
 public interface DepartmentsService {
-    List<Departments> departmentsList();
-    Departments findDepartmentsById(Long id);
-    Departments findDepartmentsByName(String name);
+    List<Department> departmentsList();
+    Department findDepartmentsById(Long id);
+    Department findDepartmentsByName(String name);
     void deleteDepartments(Long id);
-    Departments addDepartments(Departments departments);
-    Departments updateDepartments(Departments departments);
+    Department addDepartments(Department department);
+    Department updateDepartments(Department department);
 }

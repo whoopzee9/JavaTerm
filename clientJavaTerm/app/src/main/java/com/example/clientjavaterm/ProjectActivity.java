@@ -21,8 +21,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.clientjavaterm.converters.DepartmentConverter;
 import com.example.clientjavaterm.converters.ProjectConverter;
-import com.example.clientjavaterm.entity.Departments;
-import com.example.clientjavaterm.entity.Projects;
+import com.example.clientjavaterm.entity.Department;
+import com.example.clientjavaterm.entity.Project;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -59,14 +59,14 @@ public class ProjectActivity extends AppCompatActivity {
     private Button BFind;
     private EditText ETFindNameOrId;
     private Spinner spinner;
-    private List<Projects> array;
+    private List<Project> array;
     private String token;
     private String urlString;
     private int spinnerItem;
     private int currentRecord;
     private int arrayLength;
-    private Departments currentDepartment;
-    private CustomSpinnerAdapter<Departments> departmentAdapter;
+    private Department currentDepartment;
+    private CustomSpinnerAdapter<Department> departmentAdapter;
     private RequestHandler handler;
     private ProjectConverter converter;
     private Gson projectGson;
@@ -143,7 +143,7 @@ public class ProjectActivity extends AppCompatActivity {
         spinnerDepartment.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                currentDepartment = (Departments) parent.getItemAtPosition(position);
+                currentDepartment = (Department) parent.getItemAtPosition(position);
             }
 
             @Override
@@ -212,6 +212,10 @@ public class ProjectActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+
+        spinnerItem = 1;
+        BFindClickListener();
+        spinnerItem = 0;
 
         final DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -347,6 +351,8 @@ public class ProjectActivity extends AppCompatActivity {
         });
     }
 
+
+
     private String getFormattedDate(int year, int month, int day) {
         Calendar cal = Calendar.getInstance();
         cal.set(year, month, day);
@@ -363,13 +369,13 @@ public class ProjectActivity extends AppCompatActivity {
                 GsonBuilder builder = new GsonBuilder();
                 builder.registerTypeAdapter(lConverter.getConverterClass(), lConverter);
                 Gson departmentGson = builder.create();
-                ResultConverter<Departments> converter = new ResultConverter<>(departmentGson);
-                Type listType = new TypeToken<List<Departments>>(){}.getType();
-                Type type = new TypeToken<Departments>(){}.getType();
-                List<Departments> list = converter.getListFromResult(result, listType, type);
+                ResultConverter<Department> converter = new ResultConverter<>(departmentGson);
+                Type listType = new TypeToken<List<Department>>(){}.getType();
+                Type type = new TypeToken<Department>(){}.getType();
+                List<Department> list = converter.getListFromResult(result, listType, type);
                 if (!list.isEmpty()) {
 
-                    final List<Departments> finalList = list;
+                    final List<Department> finalList = list;
                     runOnUiThread(new Runnable() {
                         public void run() {
                             departmentAdapter.addAll(finalList);
@@ -393,10 +399,10 @@ public class ProjectActivity extends AppCompatActivity {
         CallBack<String> callBack = new CallBack<String>() {
             @Override
             public void onSuccess(String result) {
-                ResultConverter<Projects> converter = new ResultConverter<>(projectGson);
-                Type listType = new TypeToken<List<Projects>>(){}.getType();
-                Type type = new TypeToken<Projects>(){}.getType();
-                List<Projects> list = converter.getListFromResult(result, listType, type);
+                ResultConverter<Project> converter = new ResultConverter<>(projectGson);
+                Type listType = new TypeToken<List<Project>>(){}.getType();
+                Type type = new TypeToken<Project>(){}.getType();
+                List<Project> list = converter.getListFromResult(result, listType, type);
                 if (list.isEmpty()) {
                     createToast("Nothing found!");
                 } else {
@@ -518,10 +524,10 @@ public class ProjectActivity extends AppCompatActivity {
         CallBack<String> callBack = new CallBack<String>() {
             @Override
             public void onSuccess(String result) {
-                ResultConverter<Projects> converter = new ResultConverter<>(projectGson);
-                Type listType = new TypeToken<List<Projects>>(){}.getType();
-                Type type = new TypeToken<Projects>(){}.getType();
-                List<Projects> list = converter.getListFromResult(result, listType, type);
+                ResultConverter<Project> converter = new ResultConverter<>(projectGson);
+                Type listType = new TypeToken<List<Project>>(){}.getType();
+                Type type = new TypeToken<Project>(){}.getType();
+                List<Project> list = converter.getListFromResult(result, listType, type);
 
                 if (name.isEmpty() || cost.isEmpty() || dateBeg.isEmpty() || dateEnd.isEmpty() ||
                         dateEndReal.isEmpty() || currentDepartment == null) {
@@ -547,13 +553,13 @@ public class ProjectActivity extends AppCompatActivity {
                     return;
                 }
 
-                Projects object = new Projects(null, name, newCost, currentDepartment, beg, end, endReal);
+                Project object = new Project(null, name, newCost, currentDepartment, beg, end, endReal);
 
                 if (!list.contains(object)) {
                     CallBack<String> call = new CallBack<String>() {
                         @Override
                         public void onSuccess(String result) {
-                            final Projects proj = projectGson.fromJson(result, Projects.class);
+                            final Project proj = projectGson.fromJson(result, Project.class);
                             runOnUiThread(new Runnable() {
                                 public void run() {
                                     ETId.setText(proj.getId().toString());
@@ -606,12 +612,12 @@ public class ProjectActivity extends AppCompatActivity {
         CallBack<String> callBack = new CallBack<String>() {
             @Override
             public void onSuccess(String result) {
-                Projects proj = projectGson.fromJson(result, Projects.class);
-                Projects curr = array.get(currentRecord);
+                Project proj = projectGson.fromJson(result, Project.class);
+                Project curr = array.get(currentRecord);
                 curr.setId(proj.getId());
                 curr.setName(proj.getName());
                 curr.setCost(proj.getCost());
-                curr.setDepartments(proj.getDepartments());
+                curr.setDepartment(proj.getDepartment());
                 curr.setDateBeg(proj.getDateBeg());
                 curr.setDateEnd(proj.getDateEnd());
                 curr.setDateEndReal(proj.getDateEndReal());
@@ -650,7 +656,7 @@ public class ProjectActivity extends AppCompatActivity {
                     return;
                 }
 
-                Projects object = new Projects(Long.parseLong(id), name, newCost, currentDepartment, beg, end, endReal);
+                Project object = new Project(Long.parseLong(id), name, newCost, currentDepartment, beg, end, endReal);
                 String json = projectGson.toJson(object);
                 String url = "projects/update";
                 handler.setUrlResource(url);
@@ -714,14 +720,14 @@ public class ProjectActivity extends AppCompatActivity {
     private void setFieldsWithCurrentProject(final int num) {
         runOnUiThread(new Runnable() {
             public void run() {
-                Projects object = array.get(num);
+                Project object = array.get(num);
                 ETId.setText(object.getId().toString());
                 ETName.setText(object.getName());
                 ETCost.setText(object.getCost().toString());
-                List<Departments> list = departmentAdapter.getList();
+                List<Department> list = departmentAdapter.getList();
                 int ind = -1;
                 for (int i = 0; i < list.size(); i++) {
-                    if (list.get(i).getId().equals(object.getDepartments().getId())) {
+                    if (list.get(i).getId().equals(object.getDepartment().getId())) {
                         ind = i;
                     }
                 }

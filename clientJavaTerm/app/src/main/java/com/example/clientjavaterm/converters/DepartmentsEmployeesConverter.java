@@ -1,8 +1,8 @@
 package com.example.clientjavaterm.converters;
 
-import com.example.clientjavaterm.entity.Departments;
-import com.example.clientjavaterm.entity.DepartmentsEmployees;
-import com.example.clientjavaterm.entity.Employees;
+import com.example.clientjavaterm.entity.Department;
+import com.example.clientjavaterm.entity.DepartmentEmployee;
+import com.example.clientjavaterm.entity.Employee;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -10,32 +10,29 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 
 import java.lang.reflect.Type;
-import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
-public class DepartmentsEmployeesConverter implements BaseConverter<DepartmentsEmployees> {
+public class DepartmentsEmployeesConverter implements BaseConverter<DepartmentEmployee> {
     @Override
     public Class getConverterClass() {
-        return DepartmentsEmployees.class;
+        return DepartmentEmployee.class;
     }
 
     @Override
-    public DepartmentsEmployees deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+    public DepartmentEmployee deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject object = json.getAsJsonObject();
         Long id = object.get("id").getAsLong();
-        Departments department = context.deserialize(object.get("departments"), Departments.class);
-        Employees employees = context.deserialize(object.get("employees"), Employees.class);
+        Department department = context.deserialize(object.get("departments"), Department.class);
+        Employee employee = context.deserialize(object.get("employees"), Employee.class);
 
-        return new DepartmentsEmployees(id,department, employees);
+        return new DepartmentEmployee(id,department, employee);
     }
 
     @Override
-    public JsonElement serialize(DepartmentsEmployees src, Type typeOfSrc, JsonSerializationContext context) {
+    public JsonElement serialize(DepartmentEmployee src, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject object = new JsonObject();
         object.addProperty("id", src.getId());
-        object.add("departments", context.serialize(src.getDepartments()));
-        object.add("employees", context.serialize(src.getEmployees()));
+        object.add("departments", context.serialize(src.getDepartment()));
+        object.add("employees", context.serialize(src.getEmployee()));
         return object;
     }
 }

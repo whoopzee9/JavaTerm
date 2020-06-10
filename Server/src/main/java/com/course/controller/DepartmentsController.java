@@ -1,6 +1,6 @@
 package com.course.controller;
 
-import com.course.entity.Departments;
+import com.course.entity.Department;
 import com.course.exception.DepartmentDeletionException;
 import com.course.exception.DepartmentNotFoundException;
 import com.course.exception.InvalidJwtAuthenticationException;
@@ -20,18 +20,18 @@ public class DepartmentsController {
     private DepartmentsService departmentsService;
 
     @PostMapping(value = "/add", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<Departments> addDepartment(@RequestBody Departments departments) {
+    public ResponseEntity<Department> addDepartment(@RequestBody Department department) {
         try {
-            return new ResponseEntity<>(departmentsService.addDepartments(departments), HttpStatus.CREATED);
+            return new ResponseEntity<>(departmentsService.addDepartments(department), HttpStatus.CREATED);
         } catch (InvalidJwtAuthenticationException ex) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
         }
     }
 
     @PutMapping(value = "/update", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<Departments> updateDepartment(@RequestBody Departments departments) {
+    public ResponseEntity<Department> updateDepartment(@RequestBody Department department) {
         try {
-            return new ResponseEntity<>(departmentsService.updateDepartments(departments), HttpStatus.OK);
+            return new ResponseEntity<>(departmentsService.updateDepartments(department), HttpStatus.OK);
         } catch (DepartmentNotFoundException ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         } catch (InvalidJwtAuthenticationException ex) {
@@ -40,7 +40,7 @@ public class DepartmentsController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Departments>> getAllDepartments() {
+    public ResponseEntity<List<Department>> getAllDepartments() {
         try {
             return new ResponseEntity<>(departmentsService.departmentsList(), HttpStatus.OK);
         } catch (InvalidJwtAuthenticationException ex) {
@@ -49,7 +49,7 @@ public class DepartmentsController {
     }
 
     @GetMapping("/getById/{id}")
-    public ResponseEntity<Departments> getDepartmentById(@PathVariable("id") Long id) {
+    public ResponseEntity<Department> getDepartmentById(@PathVariable("id") Long id) {
         try {
             return new ResponseEntity<>(departmentsService.findDepartmentsById(id), HttpStatus.OK);
         } catch (DepartmentNotFoundException ex) {
@@ -60,7 +60,7 @@ public class DepartmentsController {
     }
 
     @GetMapping("/getByName/{name}")
-    public ResponseEntity<Departments> getDepartmentByName(@PathVariable("name") String name) {
+    public ResponseEntity<Department> getDepartmentByName(@PathVariable("name") String name) {
         try {
             return new ResponseEntity<>(departmentsService.findDepartmentsByName(name), HttpStatus.OK);
         } catch (DepartmentNotFoundException ex) {
